@@ -27,14 +27,14 @@ body {
 }
 
 .user-info span {
-    margin-left: 1.5rem;
+    margin-left: 1rem;
     background: #334155;
     padding: 0.4rem 0.8rem;
     border-radius: 6px;
 }
 
 .container {
-    max-width: 1000px;
+    max-width: 900px;
     margin: 2rem auto;
     padding: 0 1rem;
     display: flex;
@@ -54,7 +54,7 @@ body {
     color: #f59e0b;
 }
 
-/* Autenticación */
+/* Forms */
 .forms-wrapper {
     display: flex;
     gap: 2rem;
@@ -63,13 +63,13 @@ body {
 
 .auth-form {
     flex: 1;
-    min-width: 260px;
+    min-width: 250px;
     display: flex;
     flex-direction: column;
     gap: 0.8rem;
 }
 
-.auth-form input {
+.auth-form input, .bet-controls input {
     padding: 0.75rem;
     border-radius: 6px;
     border: 1px solid #475569;
@@ -77,8 +77,9 @@ body {
     color: white;
 }
 
+/* Botones */
 .btn {
-    padding: 0.75rem;
+    padding: 0.75rem 1.2rem;
     border: none;
     border-radius: 6px;
     cursor: pointer;
@@ -87,29 +88,57 @@ body {
 }
 
 .btn-primary { background-color: #f59e0b; color: #0f172a; }
-.btn-primary:hover { background-color: #d97706; }
-
 .btn-secondary { background-color: #3b82f6; color: white; }
-.btn-secondary:hover { background-color: #2563eb; }
+.btn-danger { background-color: #ef4444; color: white; }
+.btn-dark { background-color: #334155; color: white; }
+.btn-success { background-color: #10b981; color: white; }
+.btn-small { padding: 0.3rem 0.6rem; font-size: 0.85rem; }
 
-/* Grid de Juegos */
-.games-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 1.5rem;
+/* Tragamonedas y Ruleta */
+.slots-container {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin: 1.5rem 0;
 }
 
-.game-card {
-    background: #0f172a;
-    padding: 1.5rem;
+.slot-reel {
+    background-color: #0f172a;
+    font-size: 3rem;
+    padding: 1rem 2rem;
     border-radius: 8px;
-    text-align: center;
-    border: 1px solid #334155;
+    border: 2px solid #f59e0b;
 }
 
-.game-icon { font-size: 2.5rem; margin-bottom: 0.5rem; }
+.roulette-container {
+    text-align: center;
+    margin: 1.5rem 0;
+}
 
-/* Tabla Ranking */
+.roulette-wheel {
+    font-size: 1.5rem;
+    font-weight: bold;
+    background: #0f172a;
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    border: 1px solid #475569;
+}
+
+.roulette-options {
+    display: flex;
+    justify-content: center;
+    gap: 0.8rem;
+}
+
+.bet-controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+}
+
+/* Tablas */
 .ranking-table {
     width: 100%;
     border-collapse: collapse;
@@ -121,4 +150,7 @@ body {
     border-bottom: 1px solid #334155;
 }
 
-.ranking-table th { color: #94a3b8; }
+.status.active {
+    color: #10b981;
+    font-weight: bold;
+}
