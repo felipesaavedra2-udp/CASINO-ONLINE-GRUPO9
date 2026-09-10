@@ -2,11 +2,101 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Casino Online - Grupo 9</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <h1>Bienvenido a Casino Online (Grupo 9)</h1>
-    <p>Servidor EC2 configurado correctamente.</p>
+
+    <!-- Encabezado con info del usuario -->
+    <header class="navbar">
+        <div class="logo">🎰 Casino Royal - Grupo 9</div>
+        <div class="user-info">
+            <span>Usuario: <strong>Invitado</strong></span>
+            <span class="credits">🪙 Créditos: <strong>1,000</strong></span>
+        </div>
+    </header>
+
+    <main class="container">
+        
+        <!-- SECCIÓN 1: Autenticación / Registro -->
+        <section class="card auth-section">
+            <h2>Acceso a la Plataforma</h2>
+            <div class="forms-wrapper">
+                
+                <!-- Formulario de Login -->
+                <form class="auth-form">
+                    <h3>Iniciar Sesión</h3>
+                    <input type="email" placeholder="Correo electrónico" required>
+                    <input type="password" placeholder="Contraseña" required>
+                    <button type="submit" class="btn btn-primary">Ingresar</button>
+                </form>
+
+                <div class="divider"></div>
+
+                <!-- Formulario de Registro -->
+                <form class="auth-form">
+                    <h3>Registrarse</h3>
+                    <input type="text" placeholder="Nombre completo" required>
+                    <input type="email" placeholder="Correo electrónico" required>
+                    <input type="password" placeholder="Contraseña" required>
+                    <button type="submit" class="btn btn-secondary">Crear Cuenta</button>
+                </form>
+
+            </div>
+        </section>
+
+        <!-- SECCIÓN 2: Dashboard de Juegos (Vista previa estática) -->
+        <section class="card dashboard-section">
+            <h2>Juegos Disponibles</h2>
+            <div class="games-grid">
+                <div class="game-card">
+                    <div class="game-icon">🎰</div>
+                    <h3>Tragamonedas</h3>
+                    <p>Prueba tu suerte y gana créditos virtuales.</p>
+                    <button class="btn btn-primary">Jugar Ahora</button>
+                </div>
+                <div class="game-card">
+                    <div class="game-icon">🎯</div>
+                    <h3>Ruleta Virtual</h3>
+                    <p>Apuesta a tus números favoritos.</p>
+                    <button class="btn btn-primary">Jugar Ahora</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECCIÓN 3: Ranking de Jugadores -->
+        <section class="card ranking-section">
+            <h2>Top Jugadores 🏆</h2>
+            <table class="ranking-table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Jugador</th>
+                        <th>Créditos</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1</td>
+                        <td>Felipe Saavedra</td>
+                        <td>15,400 🪙</td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>Domingo Ávila</td>
+                        <td>12,300 🪙</td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>Benjamín Vergara</td>
+                        <td>9,800 🪙</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+    </main>
+
 </body>
 </html>
