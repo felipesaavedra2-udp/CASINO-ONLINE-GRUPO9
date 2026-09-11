@@ -1,126 +1,49 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Casino Online - Grupo 9</title>
-    <link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Todo App -- Demo CIT2308</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
+  <header>
+    <h1>Mi lista de tareas</h1>
+    <p>Demo estatica -- CIT2308, AWS Academy Learner Lab</p>
+  </header>
 
-    <!-- Encabezado con info del usuario -->
-    <header class="navbar">
-        <div class="logo">🎰 Casino Royal - Grupo 9</div>
-        <div class="user-info">
-            <span>Usuario: <strong>Jugador Demo</strong></span>
-            <span class="credits">🪙 Créditos: <strong>1,000</strong></span>
-        </div>
-    </header>
+  <main>
+    <section class="nueva-tarea">
+      <h2>Agregar tarea</h2>
+      <form>
+        <label for="tarea">Descripcion</label>
+        <input type="text" id="tarea" name="tarea"
+               placeholder="Ej: repasar Security Groups" required>
+        <button type="submit">Agregar</button>
+      </form>
+    </section>
 
-    <main class="container">
-        
-        <!-- SECCIÓN 1: Autenticación / Registro -->
-        <section class="card auth-section">
-            <h2>Acceso a la Plataforma</h2>
-            <div class="forms-wrapper">
-                <form class="auth-form" onsubmit="return false;">
-                    <h3>Iniciar Sesión</h3>
-                    <input type="email" placeholder="Correo electrónico" required>
-                    <input type="password" placeholder="Contraseña" required>
-                    <button type="submit" class="btn btn-primary">Ingresar</button>
-                </form>
+    <section class="lista-tareas">
+      <h2>Tareas</h2>
+      <ul>
+        <li>
+          <input type="checkbox" id="t1" checked>
+          <label for="t1">Levantar instancia EC2</label>
+        </li>
+        <li>
+          <input type="checkbox" id="t2" checked>
+          <label for="t2">Instalar nginx</label>
+        </li>
+        <li>
+          <input type="checkbox" id="t3">
+          <label for="t3">Servir la Todo App en el puerto 80</label>
+        </li>
+      </ul>
+    </section>
+  </main>
 
-                <div class="divider"></div>
-
-                <form class="auth-form" onsubmit="return false;">
-                    <h3>Registrarse</h3>
-                    <input type="text" placeholder="Nombre completo" required>
-                    <input type="email" placeholder="Correo electrónico" required>
-                    <input type="password" placeholder="Contraseña" required>
-                    <button type="submit" class="btn btn-secondary">Crear Cuenta</button>
-                </form>
-            </div>
-        </section>
-
-        <!-- SECCIÓN 2: Juego 1 - Tragamonedas -->
-        <section class="card game-box">
-            <h2>Juego 1: Tragamonedas (Slots) 🎰</h2>
-            <div class="slots-container">
-                <div class="slot-reel">🍋</div>
-                <div class="slot-reel">🔔</div>
-                <div class="slot-reel">7️⃣</div>
-            </div>
-            <div class="bet-controls">
-                <label>Apuesta: </label>
-                <input type="number" value="50" min="10" step="10">
-                <button class="btn btn-primary">GIRAR 🎰</button>
-            </div>
-        </section>
-
-        <!-- SECCIÓN 3: Juego 2 - Ruleta Virtual -->
-        <section class="card game-box">
-            <h2>Juego 2: Ruleta Virtual 🎯</h2>
-            <div class="roulette-container">
-                <div class="roulette-wheel">🎯 [ 17 RED ]</div>
-                <div class="roulette-options">
-                    <button class="btn btn-danger">Rojo (x2)</button>
-                    <button class="btn btn-dark">Negro (x2)</button>
-                    <button class="btn btn-success">Verde 0 (x14)</button>
-                </div>
-            </div>
-            <div class="bet-controls">
-                <label>Apuesta: </label>
-                <input type="number" value="100" min="10" step="10">
-                <button class="btn btn-primary">APOSTAR 🎯</button>
-            </div>
-        </section>
-
-        <!-- SECCIÓN 4: Ranking y Historial -->
-        <section class="card ranking-section">
-            <h2>Top Jugadores 🏆</h2>
-            <table class="ranking-table">
-                <thead>
-                    <tr>
-                        <th>#</th>
-                        <th>Jugador</th>
-                        <th>Créditos</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr><td>1</td><td>Felipe Saavedra</td><td>15,400 🪙</td></tr>
-                    <tr><td>2</td><td>Domingo Ávila</td><td>12,300 🪙</td></tr>
-                    <tr><td>3</td><td>Benjamín Vergara</td><td>9,800 🪙</td></tr>
-                </tbody>
-            </table>
-        </section>
-
-        <!-- SECCIÓN 5: Vista de Administrador -->
-        <section class="card admin-section">
-            <h2>Panel de Administración 🛠️</h2>
-            <table class="ranking-table">
-                <thead>
-                    <tr>
-                        <th>Juego</th>
-                        <th>Estado</th>
-                        <th>Acción</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>Tragamonedas</td>
-                        <td><span class="status active">Activo</span></td>
-                        <td><button class="btn btn-small btn-danger">Desactivar</button></td>
-                    </tr>
-                    <tr>
-                        <td>Ruleta Virtual</td>
-                        <td><span class="status active">Activo</span></td>
-                        <td><button class="btn btn-small btn-danger">Desactivar</button></td>
-                    </tr>
-                </tbody>
-            </table>
-        </section>
-
-    </main>
-
+  <footer>
+    <p>Servido por nginx en una VM de AWS Academy Learner Lab.</p>
+  </footer>
 </body>
 </html>
