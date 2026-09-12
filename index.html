@@ -1,54 +1,55 @@
-<!-- Encabezado con información del usuario y saldo -->
-<header class="casino-header">
-  <div class="logo">
-    <h1>🎰 Casino Royal</h1>
-  </div>
-  <!-- Aquí el JS inyectará el nombre del usuario, saldo y botón de salir -->
-  <div id="user-header-info" class="user-info">
-    <!-- Se llena dinámicamente -->
-  </div>
-</header>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Casino Online — Iniciar sesión</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
 
-<!-- Contenedor de Formularios -->
-<main class="auth-container">
+  <header class="sitio">
+    <h1>Casino Online</h1>
+  </header>
 
-  <!-- Formulario de Inicio de Sesión -->
-  <section class="auth-card">
-    <h2>Iniciar Sesión</h2>
-    <form id="login-form">
-      <div class="form-group">
-        <label for="login-email">Correo Electrónico:</label>
-        <input type="email" id="login-email" placeholder="usuario@ejemplo.com" required>
+  <main>
+    <h2>Iniciar sesión</h2>
+
+    <form action="#" method="post">
+      <div class="campo">
+        <label for="usuario">Usuario o correo</label>
+        <input type="email" id="usuario" name="usuario" required
+               placeholder="ejemplo@correo.com">
       </div>
-      <div class="form-group">
-        <label for="login-password">Contraseña:</label>
-        <input type="password" id="login-password" placeholder="••••••••" required>
+
+      <div class="campo">
+        <label for="clave">Contraseña</label>
+        <input type="password" id="clave" name="clave" required minlength="6">
       </div>
-      <button type="submit" class="btn-primary">Ingresar</button>
+
+      <div class="campo">
+        <label for="rol">Ingresar como</label>
+        <select id="rol" name="rol">
+          <option value="jugador">Jugador</option>
+          <option value="admin">Administrador</option>
+        </select>
+      </div>
+
+      <button type="submit">Ingresar</button>
     </form>
-  </section>
 
-  <!-- Formulario de Registro -->
-  <section class="auth-card">
-    <h2>Crear Cuenta</h2>
-    <form id="register-form">
-      <div class="form-group">
-        <label for="reg-username">Nombre de Usuario:</label>
-        <input type="text" id="reg-username" placeholder="Tu Apodo" required>
-      </div>
-      <div class="form-group">
-        <label for="reg-email">Correo Electrónico:</label>
-        <input type="email" id="reg-email" placeholder="usuario@ejemplo.com" required>
-      </div>
-      <div class="form-group">
-        <label for="reg-password">Contraseña:</label>
-        <input type="password" id="reg-password" placeholder="Mínimo 6 caracteres" minlength="6" required>
-      </div>
-      <button type="submit" class="btn-secondary">Registrarse ($10,000 Fichas Gratis)</button>
-    </form>
-  </section>
+    <p>
+      Vista sin autenticacion en el backend
+      <br>
+      <a href="jugador/dashboard.html">Entrar como Jugador →</a>
+      <br>
+      <a href="admin/panel.html">Entrar como Administrador →</a>
+    </p>
+  </main>
 
-</main>
+  <footer class="sitio">
+    <p>Casino Online — Grupo 9 — Desarrollo Web y Movil</p>
+  </footer>
 
-<!-- Importar la lógica en JS (al final del body) -->
-<script src="auth.js"></script>
+</body>
+</html>
