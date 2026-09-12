@@ -157,6 +157,11 @@ section {
   gap: 0.5rem;
 }
 
+.tarjeta .boton,
+.tarjeta a.boton {
+  margin-top: auto;
+}
+
 .tarjeta h3 {
   color: #f2c14e;
 }
