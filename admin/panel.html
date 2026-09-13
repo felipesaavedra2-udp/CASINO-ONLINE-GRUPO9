@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Panel de administración — UDP Grand Casino</title>
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+
+  <header class="sitio">
+    <h1>UDP Grand Casino — Admin</h1>
+    <nav class="principal" aria-label="Navegación de administrador">
+      <ul>
+        <li><a href="panel.html">Panel</a></li>
+        <li><a href="juegos.html">Juegos</a></li>
+        <li><a href="usuarios.html">Usuarios</a></li>
+        <li><a href="partidas.html">Partidas y apuestas</a></li>
+        <li><a href="estadisticas.html">Estadísticas</a></li>
+        <li><a href="../index.html">Cerrar sesión</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <h2>Panel de administración</h2>
+
+    <section aria-labelledby="resumen-titulo">
+      <h3 id="resumen-titulo">Resumen general</h3>
+      <div class="grid-tarjetas">
+        <article class="tarjeta">
+          <h3>Usuarios registrados</h3>
+          <p>132</p>
+        </article>
+        <article class="tarjeta">
+          <h3>Juegos activos</h3>
+          <p>2 de 2</p>
+        </article>
+        <article class="tarjeta">
+          <h3>Partidas hoy</h3>
+          <p>87</p>
+        </article>
+        <article class="tarjeta">
+          <h3>Créditos apostados hoy</h3>
+          <p>15.420</p>
+        </article>
+      </div>
+    </section>
+
+    <section aria-labelledby="accesos-admin-titulo">
+      <h3 id="accesos-admin-titulo">Accesos rápidos</h3>
+      <div class="grid-tarjetas">
+        <article class="tarjeta">
+          <h3>Gestionar juegos</h3>
+          <p>Activa o desactiva los juegos disponibles para los jugadores.</p>
+          <a class="boton" href="juegos.html">Ir a juegos</a>
+        </article>
+        <article class="tarjeta">
+          <h3>Usuarios</h3>
+          <p>Consulta la lista de usuarios registrados.</p>
+          <a class="boton secundario" href="usuarios.html">Ir a usuarios</a>
+        </article>
+        <article class="tarjeta">
+          <h3>Estadísticas</h3>
+          <p>Revisa las estadísticas generales de la plataforma.</p>
+          <a class="boton secundario" href="estadisticas.html">Ir a estadísticas</a>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <footer class="sitio">
+    <p>UDP Grand Casino — Grupo 9 — Desarrollo Web</p>
+  </footer>
+
+</body>
+</html>
