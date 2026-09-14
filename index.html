@@ -10,6 +10,14 @@
 
   <header class="sitio">
     <h1>UDP Grand Casino</h1>
+    <div class="header-acciones">
+      <div class="enlaces-provisionales">
+        <a href="jugador/dashboard.html">Vista jugador</a>
+        <a href="admin/panel.html">Vista admin</a>
+      </div>
+      <a class="boton-contorno" href="#">Iniciar sesión</a>
+      <a class="boton-dorado" href="#">Registrarse</a>
+    </div>
   </header>
 
   <main>
@@ -18,12 +26,31 @@
       <h2>UDP Grand Casino</h2>
       <p class="descripcion">
         Juega con créditos virtuales, revisa tu historial y compite en el ranking.
-        <!-- /*Profesor el apartado que viene a continuacion que corresponden a botones para entrar como jugador o administrador lo agregue para que pueda ver las vistas provisionalmente debido a que no se puede hacer lo de la autenticacion. Una vez que avancemos mas, la idea es que lo primero que se vea es el titulo del casino en grande y debajo un boton que diga ingresar que nos permita despeglar el formulario para iniciar sesion */ -->
       </p>
-      <div class="portada-botones">
-        <a class="boton-dorado" href="jugador/dashboard.html">Entrar como Jugador</a>
-        <a class="boton-contorno" href="admin/panel.html">Entrar como Administrador</a>
+    </section>
+
+    <section aria-labelledby="juegos-titulo">
+      <h3 id="juegos-titulo">Juegos disponibles</h3>
+      <div class="grid-tarjetas">
+        <article class="tarjeta">
+          <h3>Ruleta</h3>
+          <p>Apuesta a un número, color o rango y gira la ruleta.</p>
+          <a class="boton" href="jugador/ruleta.html">Jugar</a>
+        </article>
+        <article class="tarjeta">
+          <h3>Blackjack</h3>
+          <p>Apuesta tus créditos y enfréntate al crupier.</p>
+          <a class="boton" href="jugador/blackjack.html">Jugar</a>
+        </article>
       </div>
+    </section>
+
+    <section class="ranking-destacado" aria-labelledby="ranking-titulo">
+      <div>
+        <h3 id="ranking-titulo">Ranking de jugadores</h3>
+        <p>Compárate con otros jugadores del casino y revisa quién va primero.</p>
+      </div>
+      <a class="boton secundario" href="jugador/ranking.html">Ver ranking</a>
     </section>
   </main>
 
