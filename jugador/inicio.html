@@ -3,27 +3,32 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>UDP Grand Casino — Iniciar sesión</title>
-  <link rel="stylesheet" href="css/style.css">
+  <title>Inicio — UDP Grand Casino</title>
+  <link rel="stylesheet" href="../css/style.css">
 </head>
 <body>
 
   <header class="sitio">
     <h1>UDP Grand Casino</h1>
+    <nav class="principal" aria-label="Navegación de jugador">
+      <ul>
+        <li><a href="inicio.html">Inicio</a></li>
+        <li><a href="dashboard.html">Mi cuenta</a></li>
+        <li><a href="juegos.html">Juegos</a></li>
+        <li><a href="historial.html">Historial</a></li>
+        <li><a href="ranking.html">Ranking</a></li>
+      </ul>
+    </nav>
     <div class="header-acciones">
-      <div class="enlaces-provisionales">
-        <a href="jugador/inicio.html">Vista jugador</a>
-        <a href="admin/panel.html">Vista admin</a>
-      </div>
-      <a class="boton-contorno" href="#">Iniciar sesión</a>
-      <a class="boton-dorado" href="#">Registrarse</a>
+      <span>JugadorDemo · 1.250 créditos</span>
+      <a class="boton-contorno" href="../index.html">Cerrar sesión</a>
     </div>
   </header>
 
   <main>
     <section class="portada">
       <p class="subtitulo">Créditos virtuales · Sin dinero real</p>
-      <h2>UDP Grand Casino</h2>
+      <h2>Bienvenido, JugadorDemo</h2>
       <p class="descripcion">
         Juega con créditos virtuales, revisa tu historial y compite en el ranking.
       </p>
@@ -35,12 +40,12 @@
         <article class="tarjeta">
           <h3>Ruleta</h3>
           <p>Apuesta a un número, color o rango y gira la ruleta.</p>
-          <a class="boton" href="jugador/ruleta.html">Jugar</a>
+          <a class="boton" href="ruleta.html">Jugar</a>
         </article>
         <article class="tarjeta">
           <h3>Blackjack</h3>
           <p>Apuesta tus créditos y enfréntate al crupier.</p>
-          <a class="boton" href="jugador/blackjack.html">Jugar</a>
+          <a class="boton" href="blackjack.html">Jugar</a>
         </article>
       </div>
     </section>
@@ -50,12 +55,12 @@
         <h3 id="ranking-titulo">Ranking de jugadores</h3>
         <p>Compárate con otros jugadores del casino y revisa quién va primero.</p>
       </div>
-      <a class="boton secundario" href="jugador/ranking.html">Ver ranking</a>
+      <a class="boton secundario" href="ranking.html">Ver ranking</a>
     </section>
   </main>
 
   <footer class="sitio">
-    <p>UDP Grand Casino — Grupo 9 — Desarrollo Web y Móvil </p>
+    <p>UDP Grand Casino — Grupo 9 — Desarrollo Web</p>
   </footer>
 
 </body>
