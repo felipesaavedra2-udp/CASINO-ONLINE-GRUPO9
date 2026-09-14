@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gestión de juegos — UDP Grand Casino</title>
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+
+  <header class="sitio">
+    <h1>UDP Grand Casino — Admin</h1>
+    <nav class="principal" aria-label="Navegación de administrador">
+      <ul>
+        <li><a href="panel.html">Panel</a></li>
+        <li><a href="juegos.html">Juegos</a></li>
+        <li><a href="usuarios.html">Usuarios</a></li>
+        <li><a href="partidas.html">Partidas y apuestas</a></li>
+        <li><a href="estadisticas.html">Estadísticas</a></li>
+        <li><a href="../index.html">Cerrar sesión</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <h2>Gestión de juegos</h2>
+    <p>Activa o desactiva un juego para que aparezca o no en la vista del jugador.</p>
+
+    <ul class="grid-tarjetas" id="lista-juegos">
+      <li class="tarjeta" data-juego="ruleta">
+        <h3>Ruleta</h3>
+        <p class="estado estado-activo">Estado: Activo</p>
+        <button type="button" class="boton-toggle">Desactivar</button>
+      </li>
+
+      <li class="tarjeta" data-juego="blackjack">
+        <h3>Blackjack</h3>
+        <p class="estado estado-activo">Estado: Activo</p>
+        <button type="button" class="boton-toggle">Desactivar</button>
+      </li>
+    </ul>
+  </main>
+
+  <footer class="sitio">
+    <p>UDP Grand Casino — Grupo 9 — Desarrollo Web</p>
+  </footer>
+
+  <script src="../js/main.js"></script>
+</body>
+</html>
