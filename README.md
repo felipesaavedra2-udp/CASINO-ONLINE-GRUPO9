@@ -20,7 +20,8 @@ Los créditos que se muestran son virtuales y no representan dinero real; el pro
 ## Estructura del proyecto
 
 ```
-index.html          Portada / login
+index.html          Inicio de sesión
+registro.html          Registro de usuario
 css/style.css        Estilos generales del sitio
 js/main.js            Interacciones simples (activar/desactivar juegos)
 jugador/               Vistas del jugador (inicio, mi cuenta, juegos, ruleta, blackjack, historial, ranking)
