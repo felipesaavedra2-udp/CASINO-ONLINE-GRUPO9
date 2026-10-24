@@ -36,6 +36,11 @@ header.sitio h1 {
   color: #f2c14e;
 }
 
+header.sitio h1 a {
+  color: inherit;
+  text-decoration: none;
+}
+
 .header-acciones {
   display: flex;
   align-items: center;
