@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Historial — UDP Grand Casino</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="manifest" href="../manifest.json">
+</head>
+<script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('../sw.js');
+  }
+</script>
+<body>
+
+  <header class="sitio">
+    <h1>UDP Grand Casino</h1>
+    <nav class="principal" aria-label="Navegación de jugador">
+      <ul>
+        <li><a href="dashboard.html">Mi cuenta</a></li>
+        <li><a href="juegos.html">Juegos</a></li>
+        <li><a href="historial.html">Historial</a></li>
+        <li><a href="ranking.html">Ranking</a></li>
+        <li><a href="../index.html">Cerrar sesión</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <h2>Historial y estadísticas</h2>
+
+    <section aria-labelledby="stats-titulo">
+      <h3 id="stats-titulo">Mis estadísticas</h3>
+      <div class="grid-tarjetas">
+        <article class="tarjeta">
+          <h3>Partidas jugadas</h3>
+          <p>24</p>
+        </article>
+        <article class="tarjeta">
+          <h3>Partidas ganadas</h3>
+          <p>10</p>
+        </article>
+        <article class="tarjeta">
+          <h3>Créditos netos ganados</h3>
+          <p>+320</p>
+        </article>
+      </div>
+    </section>
+
+    <section aria-labelledby="historial-titulo">
+      <h3 id="historial-titulo">Historial de partidas</h3>
+      <table>
+        <caption>Últimas partidas jugadas</caption>
+        <thead>
+          <tr>
+            <th scope="col">Fecha</th>
+            <th scope="col">Juego</th>
+            <th scope="col">Apuesta</th>
+            <th scope="col">Resultado</th>
+            <th scope="col">Créditos</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>08/09/2026</td>
+            <td>Ruleta</td>
+            <td>50</td>
+            <td>Ganó</td>
+            <td>+100</td>
+          </tr>
+          <tr>
+            <td>07/09/2026</td>
+            <td>Blackjack</td>
+            <td>30</td>
+            <td>Perdió</td>
+            <td>-30</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+  </main>
+
+  <footer class="sitio">
+    <p>UDP Grand Casino — Grupo 9 — Desarrollo Web</p>
+  </footer>
+
+</body>
+</html>

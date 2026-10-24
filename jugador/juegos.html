@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Juegos disponibles — UDP Grand Casino</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="manifest" href="../manifest.json">
+</head>
+<script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('../sw.js');
+  }
+</script>
+<body>
+
+  <header class="sitio">
+    <h1>UDP Grand Casino</h1>
+    <nav class="principal" aria-label="Navegación de jugador">
+      <ul>
+        <li><a href="dashboard.html">Mi cuenta</a></li>
+        <li><a href="juegos.html">Juegos</a></li>
+        <li><a href="historial.html">Historial</a></li>
+        <li><a href="ranking.html">Ranking</a></li>
+        <li><a href="../index.html">Cerrar sesión</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <h2>Juegos disponibles</h2>
+
+    <div class="grid-tarjetas">
+      <article class="tarjeta">
+        <h3>Ruleta</h3>
+        <p>¡Apuesta a un número, color o rango y veamos si es tu dia de suerte!.</p>
+        <a class="boton" href="ruleta.html">Jugar</a>
+      </article>
+
+      <article class="tarjeta">
+        <h3>Blackjack</h3>
+        <p>Suma lo que mas cerca posible a 21 sin pasarte.</p>
+        <a class="boton" href="blackjack.html">Jugar</a>
+      </article>
+    </div>
+  </main>
+
+  <footer class="sitio">
+    <p>UDP Grand Casino — Grupo 9 — Desarrollo Web</p>
+  </footer>
+
+</body>
+</html>

@@ -5,9 +5,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>UDP Grand Casino — Iniciar sesión</title>
   <link rel="stylesheet" href="css/style.css">
+  <link rel="manifest" href="./manifest.json">
 </head>
+<script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('./sw.js');
+  }
+</script>
 <body>
-
   <header class="sitio">
     <h1>UDP Grand Casino</h1>
   </header>
