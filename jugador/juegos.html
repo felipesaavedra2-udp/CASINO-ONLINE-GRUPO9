@@ -3,49 +3,73 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Juegos — UDP Grand Casino</title>
-  <link rel="stylesheet" href="../css/style.css">
+  <meta name="theme-color" content="#14202b">
+  <title>Juegos disponibles — UDP Grand Casino</title>
+  <link rel="manifest" href="/manifest.json">
+  <link rel="icon" href="/icons/icono-192.png" type="image/png">
+  <link rel="apple-touch-icon" href="/icons/icono-192.png">
+  <link rel="stylesheet" href="/css/style.css">
+  <script type="module" src="/js/main.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.8/dist/cdn.min.js"></script>
 </head>
-<body>
+<body x-data="pagina('jugador')">
 
-  <header class="sitio">
-    <h1>UDP Grand Casino</h1>
-    <nav class="principal" aria-label="Navegación de jugador">
-      <ul>
-        <li><a href="inicio.html">Inicio</a></li>
-        <li><a href="dashboard.html">Mi cuenta</a></li>
-        <li><a href="juegos.html">Juegos</a></li>
-        <li><a href="historial.html">Historial</a></li>
-        <li><a href="ranking.html">Ranking</a></li>
-      </ul>
-    </nav>
-    <div class="header-acciones">
-      <span>JugadorDemo · 1.250 créditos</span>
-      <a class="boton-contorno" href="../index.html">Cerrar sesión</a>
+  <div class="aviso-conexion" role="status" x-data="avisoConexion" x-show="sinConexion" x-cloak
+       @online.window="actualizar()" @offline.window="actualizar()">
+    Sin conexión: la aplicación sigue funcionando con los datos guardados en este dispositivo.
+  </div>
+
+  <p class="verificando" x-show="verificando">Verificando sesión…</p>
+
+  <template x-if="autorizado">
+    <div class="aplicacion">
+
+      <header class="sitio">
+        <h1><a href="/jugador/dashboard.html">UDP Grand Casino</a></h1>
+        <p class="usuario">Hola, <span x-text="usuario.nombre"></span></p>
+        <nav class="principal" aria-label="Navegación de jugador" x-data="navegacion('jugador')" :class="{ 'abierto': abierto }">
+          <button type="button" class="menu-boton secundario" @click="alternar()"
+                  :aria-expanded="abierto" aria-controls="menu-principal">Menú</button>
+          <ul id="menu-principal">
+            <template x-for="e in enlaces" :key="e.ruta">
+              <li><a :href="e.ruta" x-text="e.texto" :aria-current="actual(e.ruta)"></a></li>
+            </template>
+            <li><button type="button" class="secundario" @click="salir()">Cerrar sesión</button></li>
+          </ul>
+        </nav>
+      </header>
+
+      <main>
+        <h2>Juegos disponibles</h2>
+
+        <div x-data="juegosJugador">
+          <p class="mensaje-cargando" role="status" x-show="cargando" x-cloak>Cargando…</p>
+          <p class="mensaje-error" role="alert" x-show="error" x-text="error" x-cloak></p>
+          <p class="mensaje-vacio" x-show="mostrarVacio" x-cloak>Por ahora no hay juegos disponibles. Vuelve más tarde.</p>
+
+          <div class="grid-tarjetas" x-show="mostrarLista" x-cloak>
+            <template x-for="j in juegos" :key="j.id">
+              <article class="tarjeta">
+                <h3 x-text="j.nombre"></h3>
+                <p x-text="j.descripcion"></p>
+                <template x-if="j.ruta">
+                  <a class="boton" :href="j.ruta">Jugar</a>
+                </template>
+                <template x-if="!j.ruta">
+                  <p class="ayuda">Próximamente</p>
+                </template>
+              </article>
+            </template>
+          </div>
+        </div>
+      </main>
+
+      <footer class="sitio">
+        <p>UDP Grand Casino — Grupo 9 — Desarrollo Web y Móvil</p>
+      </footer>
+
     </div>
-  </header>
-
-  <main>
-    <h2>Juegos disponibles</h2>
-    <p>Elige un juego para comenzar a jugar.</p>
-
-    <div class="grid-tarjetas">
-      <article class="tarjeta">
-        <h3>Ruleta</h3>
-        <p>Apuesta a un número, color o rango y gira la ruleta.</p>
-        <a class="boton" href="ruleta.html">Jugar</a>
-      </article>
-      <article class="tarjeta">
-        <h3>Blackjack</h3>
-        <p>Apuesta tus créditos y enfréntate al crupier.</p>
-        <a class="boton" href="blackjack.html">Jugar</a>
-      </article>
-    </div>
-  </main>
-
-  <footer class="sitio">
-    <p>UDP Grand Casino — Grupo 9 — Desarrollo Web</p>
-  </footer>
+  </template>
 
 </body>
 </html>
