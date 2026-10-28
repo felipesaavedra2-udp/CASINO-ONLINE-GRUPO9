@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -26,25 +27,88 @@
     <h2>Gestión de juegos</h2>
     <p>Activa o desactiva un juego para que aparezca o no en la vista del jugador.</p>
 
-    <ul class="grid-tarjetas" id="lista-juegos">
-      <li class="tarjeta" data-juego="ruleta">
-        <h3>Ruleta</h3>
-        <p class="estado estado-activo">Estado: Activo</p>
-        <button type="button" class="boton-toggle">Desactivar</button>
-      </li>
+    <p id="mensaje-juegos" role="status">Cargando juegos...</p>
 
-      <li class="tarjeta" data-juego="blackjack">
-        <h3>Blackjack</h3>
-        <p class="estado estado-activo">Estado: Activo</p>
-        <button type="button" class="boton-toggle">Desactivar</button>
-      </li>
-    </ul>
+    <ul class="grid-tarjetas" id="lista-juegos"></ul>
   </main>
 
   <footer class="sitio">
     <p>UDP Grand Casino — Grupo 9 — Desarrollo Web</p>
   </footer>
 
-  <script src="../js/main.js"></script>
+  <script type="module">
+    import { LocalStorageRepository } from '../js/repositorio/LocalStorageRepository.js';
+    import { JuegoService } from '../js/servicios/JuegoService.js';
+
+    const repositorio = new LocalStorageRepository();
+    const servicio = new JuegoService(repositorio);
+
+    const lista = document.querySelector('#lista-juegos');
+    const mensaje = document.querySelector('#mensaje-juegos');
+
+    async function cargarJuegos() {
+      mensaje.textContent = 'Cargando juegos...';
+
+      try {
+        const juegos = await servicio.listar();
+
+        lista.replaceChildren();
+
+        if (juegos.length === 0) {
+          mensaje.textContent = 'No hay juegos registrados.';
+          return;
+        }
+
+        mensaje.textContent = '';
+
+        for (const juego of juegos) {
+          const tarjeta = document.createElement('li');
+          tarjeta.className = 'tarjeta';
+
+          const titulo = document.createElement('h3');
+          titulo.textContent = juego.nombre;
+
+          const estado = document.createElement('p');
+          estado.className = juego.activo
+            ? 'estado estado-activo'
+            : 'estado estado-inactivo';
+
+          estado.textContent = juego.activo
+            ? 'Estado: Activo'
+            : 'Estado: Inactivo';
+
+          const boton = document.createElement('button');
+          boton.type = 'button';
+          boton.className = 'boton-toggle';
+          boton.textContent = juego.activo
+            ? 'Desactivar'
+            : 'Activar';
+
+          boton.addEventListener('click', async () => {
+            boton.disabled = true;
+            mensaje.textContent = 'Guardando cambio...';
+
+            try {
+              await servicio.alternar(juego.id);
+              await cargarJuegos();
+            } catch (error) {
+              mensaje.textContent = 'No se pudo cambiar el estado del juego.';
+              console.error('Error al cambiar estado:', error);
+              boton.disabled = false;
+            }
+          });
+
+          tarjeta.append(titulo, estado, boton);
+          lista.append(tarjeta);
+        }
+      } catch (error) {
+        mensaje.textContent = 'No se pudieron cargar los juegos.';
+        console.error('Error al cargar juegos:', error);
+      }
+    }
+
+    cargarJuegos();
+  </script>
+
 </body>
 </html>
