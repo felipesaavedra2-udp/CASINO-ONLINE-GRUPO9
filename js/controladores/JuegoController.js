@@ -1,8 +1,8 @@
-import { estadoVista } from '../componentes/estadoVista.js';
+import { crearEstadoVista } from '../estadoVista.js';
 
 export function crearJuegosJugadorController(servicio) {
   return {
-    ...estadoVista(),
+    ...crearEstadoVista(),
     juegos: [],
 
     get mostrarVacio() {
@@ -23,7 +23,7 @@ export function crearJuegosJugadorController(servicio) {
 
 export function crearJuegosAdminController(servicio) {
   return {
-    ...estadoVista(),
+    ...crearEstadoVista(),
     juegos: [],
 
     get mostrarVacio() {
