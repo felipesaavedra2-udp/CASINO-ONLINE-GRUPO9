@@ -6,11 +6,27 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Juegos — UDP Grand Casino</title>
   <link rel="stylesheet" href="../css/style.css">
+
+  <script type="module">
+    import { LocalStorageRepository } from '../js/repositorio/LocalStorageRepository.js';
+    import { JuegoService } from '../js/servicios/JuegoService.js';
+    import { crearJuegosJugadorController } from '../js/controladores/JuegoController.js';
+
+    const repositorio = new LocalStorageRepository();
+    const servicio = new JuegoService(repositorio);
+
+    document.addEventListener('alpine:init', () => {
+      Alpine.data('juegosJugador', () => crearJuegosJugadorController(servicio));
+    });
+  </script>
+
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.8/dist/cdn.min.js"></script>
 </head>
 <body>
 
   <header class="sitio">
     <h1>UDP Grand Casino</h1>
+
     <nav class="principal" aria-label="Navegación de jugador">
       <ul>
         <li><a href="inicio.html">Inicio</a></li>
@@ -27,72 +43,38 @@
     </div>
   </header>
 
-  <main>
+  <main x-data="juegosJugador">
     <h2>Juegos disponibles</h2>
     <p>Elige un juego para comenzar a jugar.</p>
 
-    <div class="grid-tarjetas" id="catalogo-juegos"></div>
-    <p id="mensaje-juegos" role="status">Cargando juegos...</p>
+    <p x-show="cargando" role="status">Cargando juegos...</p>
+
+    <p x-show="error" x-text="error" role="alert"></p>
+
+    <p x-show="mostrarVacio">
+      No hay juegos disponibles por ahora.
+    </p>
+
+    <div class="grid-tarjetas" x-show="mostrarLista">
+      <template x-for="juego in juegos" :key="juego.id">
+        <article class="tarjeta">
+          <h3 x-text="juego.nombre"></h3>
+          <p x-text="juego.descripcion"></p>
+
+          <a
+            class="boton"
+            x-show="juego.ruta"
+            :href="juego.ruta">
+            Jugar
+          </a>
+        </article>
+      </template>
+    </div>
   </main>
 
   <footer class="sitio">
     <p>UDP Grand Casino — Grupo 9 — Desarrollo Web</p>
   </footer>
-
-  <script type="module">
-    import { LocalStorageRepository } from '../js/repositorio/LocalStorageRepository.js';
-    import { JuegoService } from '../js/servicios/JuegoService.js';
-
-    const repositorio = new LocalStorageRepository();
-    const servicio = new JuegoService(repositorio);
-
-    const catalogo = document.querySelector('#catalogo-juegos');
-    const mensaje = document.querySelector('#mensaje-juegos');
-
-    async function cargarJuegos() {
-      try {
-        const juegos = await servicio.listarActivos();
-
-        catalogo.replaceChildren();
-
-        if (juegos.length === 0) {
-          mensaje.textContent = 'No hay juegos disponibles por ahora.';
-          return;
-        }
-
-        mensaje.textContent = '';
-
-        for (const juego of juegos) {
-          const tarjeta = document.createElement('article');
-          tarjeta.className = 'tarjeta';
-
-          const titulo = document.createElement('h3');
-          titulo.textContent = juego.nombre;
-
-          const descripcion = document.createElement('p');
-          descripcion.textContent = juego.descripcion || '';
-
-          tarjeta.append(titulo, descripcion);
-
-          if (juego.ruta && /^\/[\w./-]+\.html$/.test(juego.ruta)) {
-            const enlace = document.createElement('a');
-            enlace.className = 'boton';
-            enlace.href = juego.ruta;
-            enlace.textContent = 'Jugar';
-
-            tarjeta.append(enlace);
-          }
-
-          catalogo.append(tarjeta);
-        }
-      } catch (error) {
-        mensaje.textContent = 'No se pudieron cargar los juegos.';
-        console.error('Error al cargar juegos:', error);
-      }
-    }
-
-    cargarJuegos();
-  </script>
 
 </body>
 </html>
