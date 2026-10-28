@@ -3,75 +3,102 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#14202b">
   <title>Panel de administración — UDP Grand Casino</title>
-  <link rel="stylesheet" href="../css/style.css">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="icon" href="/icons/icono-192.png" type="image/png">
+  <link rel="apple-touch-icon" href="/icons/icono-192.png">
+  <link rel="stylesheet" href="/css/style.css">
+  <script type="module" src="/js/main.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.8/dist/cdn.min.js"></script>
 </head>
-<body>
+<body x-data="pagina('admin')">
 
-  <header class="sitio">
-    <h1>UDP Grand Casino — Admin</h1>
-    <nav class="principal" aria-label="Navegación de administrador">
-      <ul>
-        <li><a href="panel.html">Panel</a></li>
-        <li><a href="juegos.html">Juegos</a></li>
-        <li><a href="usuarios.html">Usuarios</a></li>
-        <li><a href="partidas.html">Partidas y apuestas</a></li>
-        <li><a href="estadisticas.html">Estadísticas</a></li>
-        <li><a href="../index.html">Cerrar sesión</a></li>
-      </ul>
-    </nav>
-  </header>
+  <div class="aviso-conexion" role="status" x-data="avisoConexion" x-show="sinConexion" x-cloak
+       @online.window="actualizar()" @offline.window="actualizar()">
+    Sin conexión: la aplicación sigue funcionando con los datos guardados en este dispositivo.
+  </div>
 
-  <main>
-    <h2>Panel de administración</h2>
+  <p class="verificando" x-show="verificando">Verificando sesión…</p>
 
-    <section aria-labelledby="resumen-titulo">
-      <h3 id="resumen-titulo">Resumen general</h3>
-      <div class="grid-tarjetas">
-        <article class="tarjeta">
-          <h3>Usuarios registrados</h3>
-          <p>132</p>
-        </article>
-        <article class="tarjeta">
-          <h3>Juegos activos</h3>
-          <p>2 de 2</p>
-        </article>
-        <article class="tarjeta">
-          <h3>Partidas hoy</h3>
-          <p>87</p>
-        </article>
-        <article class="tarjeta">
-          <h3>Créditos apostados hoy</h3>
-          <p>15.420</p>
-        </article>
-      </div>
-    </section>
+  <template x-if="autorizado">
+    <div class="aplicacion">
 
-    <section aria-labelledby="accesos-admin-titulo">
-      <h3 id="accesos-admin-titulo">Accesos rápidos</h3>
-      <div class="grid-tarjetas">
-        <article class="tarjeta">
-          <h3>Gestionar juegos</h3>
-          <p>Activa o desactiva los juegos disponibles para los jugadores.</p>
-          <a class="boton" href="juegos.html">Ir a juegos</a>
-        </article>
-        <article class="tarjeta">
-          <h3>Usuarios</h3>
-          <p>Consulta la lista de usuarios registrados.</p>
-          <a class="boton secundario" href="usuarios.html">Ir a usuarios</a>
-        </article>
-        <article class="tarjeta">
-          <h3>Estadísticas</h3>
-          <p>Revisa las estadísticas generales de la plataforma.</p>
-          <a class="boton secundario" href="estadisticas.html">Ir a estadísticas</a>
-        </article>
-      </div>
-    </section>
-  </main>
+      <header class="sitio">
+        <h1><a href="/admin/panel.html">UDP Grand Casino — Admin</a></h1>
+        <p class="usuario">Hola, <span x-text="usuario.nombre"></span></p>
+        <nav class="principal" aria-label="Navegación de administrador" x-data="navegacion('admin')" :class="{ 'abierto': abierto }">
+          <button type="button" class="menu-boton secundario" @click="alternar()"
+                  :aria-expanded="abierto" aria-controls="menu-principal">Menú</button>
+          <ul id="menu-principal">
+            <template x-for="e in enlaces" :key="e.ruta">
+              <li><a :href="e.ruta" x-text="e.texto" :aria-current="actual(e.ruta)"></a></li>
+            </template>
+            <li><button type="button" class="secundario" @click="salir()">Cerrar sesión</button></li>
+          </ul>
+        </nav>
+      </header>
 
-  <footer class="sitio">
-    <p>UDP Grand Casino — Grupo 9 — Desarrollo Web</p>
-  </footer>
+      <main>
+        <h2>Panel de administración</h2>
+
+        <div x-data="resumenGeneral">
+          <h3 id="resumen-titulo">Resumen general</h3>
+          <p class="mensaje-cargando" role="status" x-show="cargando" x-cloak>Cargando…</p>
+          <p class="mensaje-error" role="alert" x-show="error" x-text="error" x-cloak></p>
+          <div class="grid-tarjetas" x-show="mostrarDatos" x-cloak aria-labelledby="resumen-titulo">
+            <article class="tarjeta">
+              <h4>Usuarios registrados</h4>
+              <p class="cifra" x-text="datos.totalUsuarios"></p>
+            </article>
+            <article class="tarjeta">
+              <h4>Juegos activos</h4>
+              <p class="cifra" x-text="juegosActivosTexto"></p>
+            </article>
+            <article class="tarjeta">
+              <h4>Partidas hoy</h4>
+              <p class="cifra" x-text="datos.partidasHoy"></p>
+            </article>
+            <article class="tarjeta">
+              <h4>Créditos apostados hoy</h4>
+              <p class="cifra" x-text="$creditos(datos.creditosHoy)"></p>
+            </article>
+          </div>
+        </div>
+
+        <section aria-labelledby="accesos-admin-titulo">
+          <h3 id="accesos-admin-titulo">Accesos rápidos</h3>
+          <div class="grid-tarjetas">
+            <article class="tarjeta">
+              <h4>Gestionar juegos</h4>
+              <p>Crea, edita, activa o desactiva los juegos del casino.</p>
+              <a class="boton" href="/admin/juegos.html">Ir a juegos</a>
+            </article>
+            <article class="tarjeta">
+              <h4>Usuarios</h4>
+              <p>Administra las cuentas y los saldos de los usuarios.</p>
+              <a class="boton secundario" href="/admin/usuarios.html">Ir a usuarios</a>
+            </article>
+            <article class="tarjeta">
+              <h4>Partidas y apuestas</h4>
+              <p>Revisa, corrige o anula partidas registradas.</p>
+              <a class="boton secundario" href="/admin/partidas.html">Ir a partidas</a>
+            </article>
+            <article class="tarjeta">
+              <h4>Estadísticas</h4>
+              <p>Revisa las estadísticas generales de la plataforma.</p>
+              <a class="boton secundario" href="/admin/estadisticas.html">Ir a estadísticas</a>
+            </article>
+          </div>
+        </section>
+      </main>
+
+      <footer class="sitio">
+        <p>UDP Grand Casino — Grupo 9 — Desarrollo Web y Móvil</p>
+      </footer>
+
+    </div>
+  </template>
 
 </body>
 </html>
