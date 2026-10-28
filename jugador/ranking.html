@@ -14,8 +14,8 @@
 </head>
 <body x-data="pagina('jugador')">
 
-  <div class="aviso-conexion" role="status" x-data="avisoConexion" x-show="sinConexion" x-cloak
-       @online.window="actualizar()" @offline.window="actualizar()">
+  <div class="aviso-conexion" role="status" x-data="avisoConexion"  x-show="sinConexion"
+    @offline.window="actualizar()" x-cloak   @online.window="actualizar()">
     Sin conexión: la aplicación sigue funcionando con los datos guardados en este dispositivo.
   </div>
 
