@@ -3,65 +3,114 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#14202b">
   <title>Ruleta — UDP Grand Casino</title>
-  <link rel="stylesheet" href="../css/style.css">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="icon" href="/icons/icono-192.png" type="image/png">
+  <link rel="apple-touch-icon" href="/icons/icono-192.png">
+  <link rel="stylesheet" href="/css/style.css">
+  <script type="module" src="/js/main.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.8/dist/cdn.min.js"></script>
 </head>
-<body>
+<body x-data="pagina('jugador')">
 
-  <header class="sitio">
-    <h1>UDP Grand Casino</h1>
-    <nav class="principal" aria-label="Navegación de jugador">
-      <ul>
-        <li><a href="inicio.html">Inicio</a></li>
-        <li><a href="dashboard.html">Mi cuenta</a></li>
-        <li><a href="juegos.html">Juegos</a></li>
-        <li><a href="historial.html">Historial</a></li>
-        <li><a href="ranking.html">Ranking</a></li>
-      </ul>
-    </nav>
-    <div class="header-acciones">
-      <span>JugadorDemo · 1.250 créditos</span>
-      <a class="boton-contorno" href="../index.html">Cerrar sesión</a>
+  <div class="aviso-conexion" role="status" x-data="avisoConexion" x-show="sinConexion" x-cloak
+       @online.window="actualizar()" @offline.window="actualizar()">
+    Sin conexión: la aplicación sigue funcionando con los datos guardados en este dispositivo.
+  </div>
+
+  <p class="verificando" x-show="verificando">Verificando sesión…</p>
+
+  <template x-if="autorizado">
+    <div class="aplicacion">
+
+      <header class="sitio">
+        <h1><a href="/jugador/dashboard.html">UDP Grand Casino</a></h1>
+        <p class="usuario">Hola, <span x-text="usuario.nombre"></span></p>
+        <nav class="principal" aria-label="Navegación de jugador" x-data="navegacion('jugador')" :class="{ 'abierto': abierto }">
+          <button type="button" class="menu-boton secundario" @click="alternar()"
+                  :aria-expanded="abierto" aria-controls="menu-principal">Menú</button>
+          <ul id="menu-principal">
+            <template x-for="e in enlaces" :key="e.ruta">
+              <li><a :href="e.ruta" x-text="e.texto" :aria-current="actual(e.ruta)"></a></li>
+            </template>
+            <li><button type="button" class="secundario" @click="salir()">Cerrar sesión</button></li>
+          </ul>
+        </nav>
+      </header>
+
+      <main>
+        <h2>Ruleta</h2>
+
+        <div x-data="ruleta(usuario.id)" @apostar="girar($event.detail)">
+          <p>Saldo disponible: <span class="saldo"><span x-text="$creditos(saldo)"></span> créditos</span></p>
+          <p class="mensaje-cargando" role="status" x-show="cargando" x-cloak>Cargando…</p>
+          <p class="mensaje-error" role="alert" x-show="error" x-text="error" x-cloak></p>
+          <p class="mensaje-error" x-show="noDisponible" x-cloak>
+            La ruleta está desactivada por el administrador. <a href="/jugador/juegos.html">Volver a los juegos</a>.
+          </p>
+
+          <form x-data="formRuleta" x-show="disponible" @submit.prevent="enviar()">
+            <div class="campo">
+              <label for="tipo-apuesta">Tipo de apuesta</label>
+              <select id="tipo-apuesta" name="tipo-apuesta" x-model="borrador.tipo">
+                <option value="numero">Número exacto (paga 35 a 1)</option>
+                <option value="color">Color (paga 1 a 1)</option>
+                <option value="rango">Rango (paga 1 a 1)</option>
+              </select>
+            </div>
+
+            <div class="campo" x-show="esNumero">
+              <label for="valor-numero">Número (0 a 36)</label>
+              <input type="number" id="valor-numero" name="valor-numero" min="0" max="36" step="1"
+                     :required="esNumero" :disabled="!esNumero" x-model="borrador.valor">
+            </div>
+
+            <div class="campo" x-show="esColor" x-cloak>
+              <label for="valor-color">Color</label>
+              <select id="valor-color" name="valor-color" :required="esColor" :disabled="!esColor" x-model="borrador.valor">
+                <option value="">Elige un color</option>
+                <option value="rojo">Rojo</option>
+                <option value="negro">Negro</option>
+              </select>
+            </div>
+
+            <div class="campo" x-show="esRango" x-cloak>
+              <label for="valor-rango">Rango</label>
+              <select id="valor-rango" name="valor-rango" :required="esRango" :disabled="!esRango" x-model="borrador.valor">
+                <option value="">Elige un rango</option>
+                <option value="1-18">1 a 18</option>
+                <option value="19-36">19 a 36</option>
+              </select>
+            </div>
+
+            <div class="campo">
+              <label for="monto">Monto a apostar</label>
+              <input type="number" id="monto" name="monto" min="1" step="1" required x-model="borrador.monto">
+            </div>
+
+            <button type="submit" :disabled="cargando">Girar la ruleta</button>
+          </form>
+
+          <section aria-labelledby="resultado-titulo">
+            <h3 id="resultado-titulo">Resultado</h3>
+            <p class="mensaje-vacio" x-show="sinResultado">Todavía no has girado la ruleta.</p>
+            <template x-if="resultado">
+              <div class="resultado" :class="{ 'gano': resultado.gano }">
+                <p class="numero-ruleta" :class="resultado.color" x-text="resultado.numero"></p>
+                <p x-text="mensajeResultado"></p>
+              </div>
+            </template>
+          </section>
+        </div>
+      </main>
+
+      <footer class="sitio">
+        <p>UDP Grand Casino — Grupo 9 — Desarrollo Web y Móvil</p>
+      </footer>
+
     </div>
-  </header>
-
-  <main>
-    <h2>Ruleta</h2>
-    <p>Saldo disponible: <span class="saldo">1.250 créditos</span></p>
-
-    <form action="#" method="post">
-      <div class="campo">
-        <label for="tipo-apuesta">Tipo de apuesta</label>
-        <select id="tipo-apuesta" name="tipo-apuesta">
-          <option value="numero">Número exacto</option>
-          <option value="color">Color (rojo/negro)</option>
-          <option value="rango">Rango (1-18 / 19-36)</option>
-        </select>
-      </div>
-
-      <div class="campo">
-        <label for="valor-apuesta">Valor apostado</label>
-        <input type="text" id="valor-apuesta" name="valor-apuesta" required
-               placeholder="Ej: 17, rojo, 1-18">
-      </div>
-
-      <div class="campo">
-        <label for="monto">Monto a apostar</label>
-        <input type="number" id="monto" name="monto" min="1" step="1" required>
-      </div>
-
-      <button type="submit">Girar la ruleta</button>
-    </form>
-
-    <section aria-labelledby="resultado-titulo">
-      <h3 id="resultado-titulo">Resultado</h3>
-      <p>Aquí se mostrará el resultado de la partida una vez implementada la lógica de juego.</p>
-    </section>
-  </main>
-
-  <footer class="sitio">
-    <p>UDP Grand Casino — Grupo 9 — Desarrollo Web</p>
-  </footer>
+  </template>
 
 </body>
 </html>
