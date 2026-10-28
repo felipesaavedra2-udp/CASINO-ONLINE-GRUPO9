@@ -6,11 +6,59 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Gestión de juegos — UDP Grand Casino</title>
   <link rel="stylesheet" href="../css/style.css">
-</head>
-<body>
 
+  <style>
+    [x-cloak] { display: none !important; }
+
+    .panel-juegos {
+      margin: 1.5rem 0;
+      padding: 1rem;
+      background: #14202b;
+      border: 1px solid #22313f;
+      border-radius: 8px;
+    }
+
+    .panel-juegos form {
+      max-width: 640px;
+    }
+
+    .acciones-juego {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-top: 0.75rem;
+    }
+
+    .mensaje-error {
+      color: #ff9999;
+      margin: 1rem 0;
+    }
+  </style>
+
+  <script type="module">
+    import { LocalStorageRepository } from '../js/repositorio/LocalStorageRepository.js';
+    import { JuegoService } from '../js/servicios/JuegoService.js';
+    import { crearJuegosAdminController } from '../js/controladores/JuegoController.js';
+    import { crearFormCrud } from '../js/componentes/formCrud.js';
+    import { crearFilaCrud } from '../js/componentes/filaCrud.js';
+
+    const repositorio = new LocalStorageRepository();
+    const servicio = new JuegoService(repositorio);
+
+    document.addEventListener('alpine:init', () => {
+      Alpine.data('juegosAdmin', () => crearJuegosAdminController(servicio));
+      Alpine.data('formularioJuego', () => crearFormCrud('juego'));
+      Alpine.data('filaJuego', () => crearFilaCrud('juego'));
+    });
+  </script>
+
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.8/dist/cdn.min.js"></script>
+</head>
+
+<body>
   <header class="sitio">
     <h1>UDP Grand Casino — Admin</h1>
+
     <nav class="principal" aria-label="Navegación de administrador">
       <ul>
         <li><a href="panel.html">Panel</a></li>
@@ -23,92 +71,138 @@
     </nav>
   </header>
 
-  <main>
+  <main
+    x-data="juegosAdmin"
+    @guardar-juego="await guardar($event.detail)"
+    @alternar-juego="await alternar($event.detail.id)"
+    @eliminar-juego="await eliminar($event.detail.id)"
+  >
     <h2>Gestión de juegos</h2>
-    <p>Activa o desactiva un juego para que aparezca o no en la vista del jugador.</p>
+    <p>
+      Crea, edita y administra los juegos del casino.
+      Los juegos inactivos no aparecen en la vista del jugador.
+    </p>
 
-    <p id="mensaje-juegos" role="status">Cargando juegos...</p>
+    <section class="panel-juegos" x-data="formularioJuego"
+      @editar-juego.window="cargar($event.detail)"
+      @guardado-juego.window="limpiar()"
+    >
+      <h3 x-text="encabezado"></h3>
 
-    <ul class="grid-tarjetas" id="lista-juegos"></ul>
+      <form @submit.prevent="enviar()">
+        <div class="campo">
+          <label for="nombre-juego">Nombre</label>
+          <input
+            id="nombre-juego"
+            type="text"
+            x-model="borrador.nombre"
+            minlength="2"
+            required
+          >
+        </div>
+
+        <div class="campo">
+          <label for="descripcion-juego">Descripción</label>
+          <textarea
+            id="descripcion-juego"
+            x-model="borrador.descripcion"
+            maxlength="200"
+            rows="3"
+          ></textarea>
+        </div>
+
+        <div class="campo">
+          <label for="ruta-juego">Ruta de la mesa (opcional)</label>
+          <input
+            id="ruta-juego"
+            type="text"
+            x-model="borrador.ruta"
+            placeholder="/jugador/ruleta.html"
+          >
+        </div>
+
+        <div class="campo">
+          <label>
+            <input type="checkbox" x-model="borrador.activo">
+            Juego activo
+          </label>
+        </div>
+
+        <div class="acciones-juego">
+          <button type="submit" x-text="accion"></button>
+          <button
+            type="button"
+            class="secundario"
+            x-show="editando"
+            @click="limpiar()"
+          >
+            Cancelar edición
+          </button>
+        </div>
+      </form>
+    </section>
+
+    <p x-show="cargando" role="status">Procesando...</p>
+
+    <p
+      x-show="error"
+      x-text="error"
+      class="mensaje-error"
+      role="alert"
+    ></p>
+
+    <section>
+      <h3>Juegos registrados</h3>
+
+      <p x-show="mostrarVacio">
+        Todavía no hay juegos registrados.
+      </p>
+
+      <div class="grid-tarjetas" x-show="mostrarLista">
+        <template x-for="juego in juegos" :key="juego.id">
+          <article class="tarjeta" x-data="filaJuego">
+            <h3 x-text="juego.nombre"></h3>
+
+            <p x-text="juego.descripcion"></p>
+
+            <p
+              class="estado"
+              :class="juego.activo ? 'estado-activo' : 'estado-inactivo'"
+              x-text="juego.activo ? 'Estado: Activo' : 'Estado: Inactivo'"
+            ></p>
+
+            <div class="acciones-juego">
+              <button
+                type="button"
+                class="secundario"
+                @click="editar(juego)"
+              >
+                Editar
+              </button>
+
+              <button
+                type="button"
+                class="secundario"
+                @click="alternar(juego.id)"
+                x-text="juego.activo ? 'Desactivar' : 'Activar'"
+              ></button>
+
+              <button
+                type="button"
+                class="peligro"
+                @click="if (confirm('¿Eliminar este juego?')) eliminar(juego.id)"
+              >
+                Eliminar
+              </button>
+            </div>
+          </article>
+        </template>
+      </div>
+    </section>
   </main>
 
   <footer class="sitio">
     <p>UDP Grand Casino — Grupo 9 — Desarrollo Web</p>
   </footer>
-
-  <script type="module">
-    import { LocalStorageRepository } from '../js/repositorio/LocalStorageRepository.js';
-    import { JuegoService } from '../js/servicios/JuegoService.js';
-
-    const repositorio = new LocalStorageRepository();
-    const servicio = new JuegoService(repositorio);
-
-    const lista = document.querySelector('#lista-juegos');
-    const mensaje = document.querySelector('#mensaje-juegos');
-
-    async function cargarJuegos() {
-      mensaje.textContent = 'Cargando juegos...';
-
-      try {
-        const juegos = await servicio.listar();
-
-        lista.replaceChildren();
-
-        if (juegos.length === 0) {
-          mensaje.textContent = 'No hay juegos registrados.';
-          return;
-        }
-
-        mensaje.textContent = '';
-
-        for (const juego of juegos) {
-          const tarjeta = document.createElement('li');
-          tarjeta.className = 'tarjeta';
-
-          const titulo = document.createElement('h3');
-          titulo.textContent = juego.nombre;
-
-          const estado = document.createElement('p');
-          estado.className = juego.activo
-            ? 'estado estado-activo'
-            : 'estado estado-inactivo';
-
-          estado.textContent = juego.activo
-            ? 'Estado: Activo'
-            : 'Estado: Inactivo';
-
-          const boton = document.createElement('button');
-          boton.type = 'button';
-          boton.className = 'boton-toggle';
-          boton.textContent = juego.activo
-            ? 'Desactivar'
-            : 'Activar';
-
-          boton.addEventListener('click', async () => {
-            boton.disabled = true;
-            mensaje.textContent = 'Guardando cambio...';
-
-            try {
-              await servicio.alternar(juego.id);
-              await cargarJuegos();
-            } catch (error) {
-              mensaje.textContent = 'No se pudo cambiar el estado del juego.';
-              console.error('Error al cambiar estado:', error);
-              boton.disabled = false;
-            }
-          });
-
-          tarjeta.append(titulo, estado, boton);
-          lista.append(tarjeta);
-        }
-      } catch (error) {
-        mensaje.textContent = 'No se pudieron cargar los juegos.';
-        console.error('Error al cargar juegos:', error);
-      }
-    }
-
-    cargarJuegos();
-  </script>
-
 </body>
 </html>
