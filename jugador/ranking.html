@@ -3,67 +3,80 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#14202b">
   <title>Ranking — UDP Grand Casino</title>
-  <link rel="stylesheet" href="../css/style.css">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="icon" href="/icons/icono-192.png" type="image/png">
+  <link rel="apple-touch-icon" href="/icons/icono-192.png">
+  <link rel="stylesheet" href="/css/style.css">
+  <script type="module" src="/js/main.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.8/dist/cdn.min.js"></script>
 </head>
-<body>
+<body x-data="pagina('jugador')">
 
-  <header class="sitio">
-    <h1>UDP Grand Casino</h1>
-    <nav class="principal" aria-label="Navegación de jugador">
-      <ul>
-        <li><a href="inicio.html">Inicio</a></li>
-        <li><a href="dashboard.html">Mi cuenta</a></li>
-        <li><a href="juegos.html">Juegos</a></li>
-        <li><a href="historial.html">Historial</a></li>
-        <li><a href="ranking.html">Ranking</a></li>
-      </ul>
-    </nav>
-    <div class="header-acciones">
-      <span>JugadorDemo · 1.250 créditos</span>
-      <a class="boton-contorno" href="../index.html">Cerrar sesión</a>
+  <div class="aviso-conexion" role="status" x-data="avisoConexion"  x-show="sinConexion"
+    @offline.window="actualizar()" x-cloak   @online.window="actualizar()">
+    Sin conexión: la aplicación sigue funcionando con los datos guardados en este dispositivo.
+  </div>
+
+  <p class="verificando" x-show="verificando">Verificando sesión…</p>
+
+  <template x-if="autorizado">
+    <div class="aplicacion">
+
+      <header class="sitio">
+        <h1><a href="/jugador/dashboard.html">UDP Grand Casino</a></h1>
+        <p class="usuario">Hola, <span x-text="usuario.nombre"></span></p>
+        <nav class="principal" aria-label="Navegación de jugador" x-data="navegacion('jugador')" :class="{ 'abierto': abierto }">
+          <button type="button" class="menu-boton secundario" @click="alternar()"
+                  :aria-expanded="abierto" aria-controls="menu-principal">Menú</button>
+          <ul id="menu-principal">
+            <template x-for="e in enlaces" :key="e.ruta">
+              <li><a :href="e.ruta" x-text="e.texto" :aria-current="actual(e.ruta)"></a></li>
+            </template>
+            <li><button type="button" class="secundario" @click="salir()">Cerrar sesión</button></li>
+          </ul>
+        </nav>
+      </header>
+
+      <main>
+        <h2>Ranking de jugadores</h2>
+
+        <div x-data="ranking">
+          <p class="mensaje-cargando" role="status" x-show="cargando" x-cloak>Cargando…</p>
+          <p class="mensaje-error" role="alert" x-show="error" x-text="error" x-cloak></p>
+          <p class="mensaje-vacio" x-show="mostrarVacio" x-cloak>Aún no hay partidas jugadas, así que el ranking está vacío. ¡Sé el primero en aparecer!</p>
+
+          <table x-show="mostrarLista" x-cloak>
+            <caption>Top jugadores por créditos netos ganados</caption>
+            <thead>
+              <tr>
+                <th scope="col">Posición</th>
+                <th scope="col">Jugador</th>
+                <th scope="col">Partidas jugadas</th>
+                <th scope="col">Créditos netos</th>
+              </tr>
+            </thead>
+            <tbody>
+              <template x-for="f in filas" :key="f.posicion">
+                <tr>
+                  <td data-label="Posición" x-text="f.posicion"></td>
+                  <td data-label="Jugador" x-text="f.usuario"></td>
+                  <td data-label="Partidas" x-text="f.partidas"></td>
+                  <td data-label="Créditos" x-text="$creditos(f.neto, true)"></td>
+                </tr>
+              </template>
+            </tbody>
+          </table>
+        </div>
+      </main>
+
+      <footer class="sitio">
+        <p>UDP Grand Casino — Grupo 9 — Desarrollo Web y Móvil</p>
+      </footer>
+
     </div>
-  </header>
-
-  <main>
-    <h2>Ranking de jugadores</h2>
-
-    <table>
-      <caption>Top jugadores por créditos ganados</caption>
-      <thead>
-        <tr>
-          <th scope="col">Posición</th>
-          <th scope="col">Jugador</th>
-          <th scope="col">Partidas jugadas</th>
-          <th scope="col">Créditos ganados</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>1</td>
-          <td>Felipe</td>
-          <td>58</td>
-          <td>4.320</td>
-        </tr>
-        <tr>
-          <td>2</td>
-          <td>Domingo</td>
-          <td>41</td>
-          <td>3.150</td>
-        </tr>
-        <tr>
-          <td>3</td>
-          <td>Dautor</td>
-          <td>36</td>
-          <td>2.780</td>
-        </tr>
-      </tbody>
-    </table>
-  </main>
-
-  <footer class="sitio">
-    <p>UDP Grand Casino — Grupo 9 — Desarrollo Web y Móvil </p>
-  </footer>
+  </template>
 
 </body>
 </html>
