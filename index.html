@@ -3,46 +3,70 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>UDP Grand Casino — Iniciar sesión</title>
-  <link rel="stylesheet" href="css/style.css">
+  <meta name="theme-color" content="#14202b">
+  <title>Iniciar sesión — UDP Grand Casino</title>
+  <link rel="manifest" href="/manifest.json">
+  <link rel="icon" href="/icons/icono-192.png" type="image/png">
+  <link rel="apple-touch-icon" href="/icons/icono-192.png">
+  <link rel="stylesheet" href="/css/style.css">
+  <script type="module" src="/js/main.js"></script>
 </head>
 <body>
 
+  <div class="aviso-conexion" role="status" x-data="avisoConexion"  x-show="sinConexion"
+    @offline.window="actualizar()" x-cloak   @online.window="actualizar()">
+    Sin conexión: la aplicación sigue funcionando con los datos guardados en este dispositivo.
+  </div>
+
   <header class="sitio">
-    <h1><a href="menu.html">UDP Grand Casino</a></h1>
-    <div class="header-acciones">
-      <div class="enlaces-provisionales">
-        <a href="jugador/inicio.html">Vista jugador</a>
-        <a href="admin/panel.html">Vista admin</a>
-      </div>
-      <a class="boton-dorado" href="registro.html">Registrarse</a>
-    </div>
+    <h1><a href="/index.html">UDP Grand Casino</a></h1>
+    <nav class="principal publica" aria-label="Acceso">
+      <ul>
+        <li><a href="/index.html">Iniciar sesión</a></li>
+        <li><a href="/registro.html">Crear cuenta</a></li>
+      </ul>
+    </nav>
   </header>
 
   <main>
-    <h2>Iniciar sesión</h2>
+    <section class="portada">
+      <p class="subtitulo">Créditos virtuales · Sin dinero real</p>
+      <h2>UDP Grand Casino</h2>
+      <p class="descripcion">
+        Juega ruleta y blackjack con créditos virtuales, revisa tu historial y sube en el ranking.
+      </p>
+    </section>
 
-    <form action="#" method="post">
-      <div class="campo">
-        <label for="usuario">Usuario</label>
-        <input type="text" id="usuario" name="usuario" required
-               placeholder="Tu nombre de usuario">
-      </div>
+    <section class="tarjeta formulario-centrado" aria-labelledby="login-titulo">
+      <h3 id="login-titulo">Iniciar sesión</h3>
+      <form x-data="login" @submit.prevent="entrar()">
+        <div class="campo">
+          <label for="correo">Correo electrónico</label>
+          <input type="email" id="correo" name="correo" required autocomplete="email" x-model="correo">
+        </div>
+        <div class="campo">
+          <label for="clave">Contraseña</label>
+          <input type="password" id="clave" name="clave" required minlength="4" autocomplete="current-password" x-model="clave">
+        </div>
+        <p class="mensaje-error" role="alert" x-show="error" x-text="error" x-cloak></p>
+        <button type="submit" class="boton-dorado" :disabled="cargando" x-text="textoBoton">Ingresar</button>
+      </form>
+      <p class="ayuda">¿Aún no tienes cuenta? <a href="/registro.html">Regístrate aquí</a>.</p>
 
-      <div class="campo">
-        <label for="contrasena">Contraseña</label>
-        <input type="password" id="contrasena" name="contrasena" required
-               placeholder="Tu contraseña">
-      </div>
 
-      <button type="submit">Iniciar sesión</button>
-    </form>
 
-    <p>¿No tienes cuenta? <a href="registro.html">Regístrate aquí</a></p>
+      <details class="ayuda">
+        <summary>Cuentas de prueba</summary>
+        <ul>
+          <li>Administrador: admin@casino.cl / admin123</li>
+          <li>Jugador: felipe@casino.cl / 1234</li>
+        </ul>
+      </details>
+    </section>
   </main>
 
   <footer class="sitio">
-    <p>UDP Grand Casino — Grupo 9 — Desarrollo Web y Móvil </p>
+    <p>UDP Grand Casino — Grupo 9 — Desarrollo Web y Móvil</p>
   </footer>
 
 </body>
