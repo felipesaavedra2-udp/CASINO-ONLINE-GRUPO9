@@ -1,7 +1,3 @@
-// Service Worker de UDP Grand Casino.
-// Guarda el shell de la aplicación para que abra sin conexión.
-// Al cambiar cualquier archivo del shell, sube la versión de CACHE (casino-v2, v3...).
-
 const CACHE = 'casino-v1';
 const SHELL = [
   '/',
@@ -45,7 +41,7 @@ const SHELL = [
 ];
 
 self.addEventListener('install', evento => {
-  console.log('install: guardando el shell en el cache');
+  console.log('Cache PWA listo');
   evento.waitUntil(
     caches.open(CACHE).then(cache => cache.addAll(SHELL))
   );
