@@ -3,72 +3,93 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#14202b">
   <title>Mi cuenta — UDP Grand Casino</title>
-  <link rel="stylesheet" href="../css/style.css">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="icon" href="/icons/icono-192.png" type="image/png">
+  <link rel="apple-touch-icon" href="/icons/icono-192.png">
+  <link rel="stylesheet" href="/css/style.css">
+  <script type="module" src="/js/main.js"></script>
 </head>
-<body>
+<body x-data="pagina('jugador')">
 
-  <header class="sitio">
-    <h1>UDP Grand Casino</h1>
-    <nav class="principal" aria-label="Navegación de jugador">
-      <ul>
-        <li><a href="inicio.html">Inicio</a></li>
-        <li><a href="dashboard.html">Mi cuenta</a></li>
-        <li><a href="juegos.html">Juegos</a></li>
-        <li><a href="historial.html">Historial</a></li>
-        <li><a href="ranking.html">Ranking</a></li>
-      </ul>
-    </nav>
-    <div class="header-acciones">
-      <span>JugadorDemo · 1.250 créditos</span>
-      <a class="boton-contorno" href="../index.html">Cerrar sesión</a>
+   <div class="aviso-conexion" role="status" x-data="avisoConexion"  x-show="sinConexion"
+    @offline.window="actualizar()" x-cloak   @online.window="actualizar()">
+    Sin conexión: la aplicación sigue funcionando con los datos guardados en este dispositivo.
+  </div>
+
+  <p class="verificando" x-show="verificando">Verificando sesión…</p>
+
+  <template x-if="autorizado">
+    <div class="aplicacion">
+
+      <header class="sitio">
+        <h1><a href="/jugador/dashboard.html">UDP Grand Casino</a></h1>
+        <p class="usuario">Hola, <span x-text="usuario.nombre"></span></p>
+        <nav class="principal" aria-label="Navegación de jugador" x-data="navegacion('jugador')" :class="{ 'abierto': abierto }">
+          <button type="button" class="menu-boton secundario" @click="alternar()"
+                  :aria-expanded="abierto" aria-controls="menu-principal">Menú</button>
+          <ul id="menu-principal">
+            <template x-for="e in enlaces" :key="e.ruta">
+              <li><a :href="e.ruta" x-text="e.texto" :aria-current="actual(e.ruta)"></a></li>
+            </template>
+            <li><button type="button" class="secundario" @click="salir()">Cerrar sesión</button></li>
+          </ul>
+        </nav>
+      </header>
+
+      <main>
+        <h2>Mi cuenta</h2>
+
+        <div x-data="cuenta(usuario.id)">
+          <p class="mensaje-cargando" role="status" x-show="cargando" x-cloak>Cargando…</p>
+          <p class="mensaje-error" role="alert" x-show="error" x-text="error" x-cloak></p>
+
+          <section aria-labelledby="saldo-titulo" x-show="!cargando" x-cloak>
+            <h3 id="saldo-titulo">Saldo de créditos virtuales</h3>
+            <p class="saldo saldo-grande"><span x-text="$creditos(perfil.saldo)"></span> créditos</p>
+            <p>Los créditos son virtuales, no representan dinero real.</p>
+            <dl class="datos">
+  <div>
+    <dt>Nombre</dt>
+    <dd x-text="perfil.nombre"></dd>
+  </div>
+  <div><dt>Correo</dt><dd x-text="perfil.correo"></dd></div>
+  <div><dt>Miembro desde</dt>
+    <dd x-text="$fecha(perfil.creado)"></dd>
+  </div>
+</dl>
+          </section>
+        </div>
+
+        <section aria-labelledby="accesos-titulo">
+          <h3 id="accesos-titulo">Accesos rápidos</h3>
+          <div class="grid-tarjetas">
+            <article class="tarjeta">
+              <h3>Jugar</h3>
+              <p>Elige entre los juegos disponibles y realiza tu apuesta.</p>
+              <a class="boton" href="/jugador/juegos.html">Ver juegos</a>
+            </article>
+            <article class="tarjeta">
+              <h3>Historial</h3>
+              <p>Revisa tus partidas anteriores y tus estadísticas.</p>
+              <a class="boton secundario" href="/jugador/historial.html">Ver historial</a>
+            </article>
+            <article class="tarjeta">
+              <h3>Ranking</h3>
+              <p>Compárate con otros jugadores del casino.</p>
+              <a class="boton secundario" href="/jugador/ranking.html">Ver ranking</a>
+            </article>
+          </div>
+        </section>
+      </main>
+
+      <footer class="sitio">
+        <p>UDP Grand Casino — Grupo 9 — Desarrollo Web y Móvil</p>
+      </footer>
+
     </div>
-  </header>
-
-  <main>
-    <h2>Mi cuenta</h2>
-
-    <section aria-labelledby="perfil-titulo">
-      <h3 id="perfil-titulo">Datos del jugador</h3>
-      <ul class="perfil-datos">
-        <li><strong>Nombre de usuario:</strong> JugadorDemo</li>
-        <li><strong>Correo asociado:</strong> jugador.demo@udpgrandcasino.cl</li>
-        <li><strong>Miembro desde:</strong> 03 de marzo de 2025</li>
-        <li><strong>Juego favorito:</strong> Ruleta</li>
-      </ul>
-    </section>
-
-    <section aria-labelledby="saldo-titulo">
-      <h3 id="saldo-titulo">Saldo de créditos virtuales</h3>
-      <p class="saldo">1.250 créditos</p>
-      <p>Los créditos son virtuales, no representan dinero real.</p>
-    </section>
-
-    <section aria-labelledby="accesos-titulo">
-      <h3 id="accesos-titulo">Accesos rápidos</h3>
-      <div class="grid-tarjetas">
-        <article class="tarjeta">
-          <h3>Jugar</h3>
-          <p>Elige entre los juegos disponibles y realiza tu apuesta.</p>
-          <a class="boton" href="juegos.html">Ver juegos</a>
-        </article>
-        <article class="tarjeta">
-          <h3>Historial</h3>
-          <p>Revisa tus partidas anteriores y tus estadísticas.</p>
-          <a class="boton secundario" href="historial.html">Ver historial</a>
-        </article>
-        <article class="tarjeta">
-          <h3>Ranking</h3>
-          <p>Compárate con otros jugadores del casino.</p>
-          <a class="boton secundario" href="ranking.html">Ver ranking</a>
-        </article>
-      </div>
-    </section>
-  </main>
-
-  <footer class="sitio">
-    <p>UDP Grand Casino — Grupo 9 — Desarrollo Web</p>
-  </footer>
+  </template>
 
 </body>
 </html>
