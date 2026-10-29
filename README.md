@@ -6,11 +6,18 @@ gestionan juegos, usuarios y partidas, y consultan estadísticas generales.
 
 CIT2308 — Desarrollo Web y Móvil · UDP 2026-2 · Entrega 2 (frontend dinámico, MVC y PWA).
 
+## Integrantes
+
+- Domingo Avila
+- Felipe Saavedra
+- Benjamin Vergara
+
 ## Acceso
 
 | | |
 |---|---|
-| **IP pública (IP elástica)** | `http://COMPLETAR-IP-ELASTICA` ← reemplazar por la IP elástica de la instancia EC2 |
+| **URL de entrega** | Pendiente de confirmar; debe utilizar HTTPS para PWA y apuestas |
+| **Dirección documentada anteriormente** | `http://52.70.77.187` (disponibilidad y carácter elástico no verificados en esta integración) |
 | Servidor | nginx sirviendo el sitio estático en `/` |
 
 > Con una **IP elástica** la dirección no cambia al apagar y encender la instancia.
@@ -53,14 +60,16 @@ Cada dominio tiene **vista, controlador, servicio** y un único contrato de dato
 ```
 index.html, registro.html, jugador/*.html, admin/*.html     VISTAS (Alpine, sin lógica)
 js/
-  main.js                       composition root: el único archivo que crea objetos concretos
+  main.js                       composition root: conecta servicios y componentes Alpine
   controladores/                coordinan: reciben un servicio, traducen eventos en órdenes
   servicios/                    reglas de negocio: reciben el repositorio por constructor
   repositorio/
     Repository.js               contrato (clase base, métodos async)
     LocalStorageRepository.js   implementación: el único archivo que toca el almacenamiento
   componentes/                  piezas Alpine reutilizables (formularios, filas, menú, estados)
-  util/formato.js               formato de créditos y fechas
+  formato.js                    formato de créditos y fechas
+  util/formato.js               compatibilidad: reexporta las funciones de formato
+  vendor/                       Alpine 3.14.8 local y licencia MIT
 sw.js · manifest.json · icons/  PWA
 ```
 
@@ -77,19 +86,47 @@ el servicio nunca sabe dónde se guardan los datos.
 
 ### Cambiar la fuente de datos
 
-Hoy los datos viven en el navegador. Para pasar a una API (Entrega 3) se escribe otra clase que
-extienda `Repository` y se cambia **una línea**: la primera sección de `js/main.js`, donde se elige
-la implementación que reciben los servicios.
+Hoy los datos viven en el navegador. Para pasar a una API (Entrega 3) se implementa el contrato
+de repositorio y se adapta su creación en `js/main.js`. Las operaciones de partidas necesitan
+además conservar la atomicidad de `transaccionPartidas`; una API debe proporcionar una transacción
+equivalente en el servidor. No basta con sustituir lecturas y escrituras independientes.
 
-Ningún servicio, controlador ni vista cambia.
+Las vistas y controladores consumen los servicios mediante sus interfaces actuales.
 
 ## PWA
 
 - `manifest.json` con nombre, íconos de 192 y 512 px, `display: standalone` y colores del tema.
-- `sw.js` guarda el shell (páginas, CSS, JS, íconos y la librería Alpine) en la caché `casino-v1`
-  y responde desde ella. Sin conexión la app abre y un aviso lo indica.
-- **Al modificar cualquier archivo del shell, subir la versión de `CACHE` en `sw.js`** (`casino-v2`, ...);
-  si no, los navegadores seguirán viendo la copia anterior.
+- `sw.js` precarga las páginas, CSS, módulos JavaScript, íconos y Alpine local.
+  Usa cachés `casino-shell-<VERSION>`, red primero y copia local cuando no hay conexión.
+- `js/pwa.js` registra el Service Worker sin reutilizar su caché HTTP. Una actualización muestra
+  un botón para recargar sin interrumpir automáticamente formularios o manos en curso.
+- La activación elimina solo cachés anteriores propias, incluida la antigua `casino-v1`.
+- **Al cambiar recursos esenciales, actualizar `VERSION` y revisar `SHELL` en `sw.js`.**
+- Se necesita una primera instalación con conexión y servir el sitio por HTTPS o localhost.
+  Una pestaña ya abierta conserva el JavaScript cargado hasta recargar.
+- Se conservan los íconos de `icons/` y las copias aportadas en la raíz. El manifiesto utiliza `icons/`.
+
+## Persistencia de partidas
+
+El repositorio guarda usuarios, historial y manos de Blackjack en una sola escritura en
+`casino:estadoPartidas` al confirmar la primera operación de partidas. Conserva las claves
+anteriores y las interfaces de acceso para el resto de los módulos. Las manos reservan créditos,
+se recuperan tras recargar y no se liquidan dos veces.
+
+Las escrituras se coordinan con Web Locks entre pestañas. Sin soporte de Web Locks se rechazan
+las operaciones de partidas. Los datos siguen siendo locales al navegador y al origen:
+`localhost` y `127.0.0.1` mantienen almacenamientos distintos.
+
+## Comprobaciones automatizadas
+
+- Partidas, exclusivamente con almacenamiento simulado: servir el proyecto y abrir
+  `/tests/partidas.regresion.html`.
+- PWA y regresiones de partidas en un perfil y servidor temporales aislados:
+  `py tests/pwa.regresion.py` (o `python3 tests/pwa.regresion.py`).
+  Requiere Chrome; puede indicarse su ejecutable mediante la variable `CHROME_PATH`.
+- `git diff --check` y `git diff --cached --check` comprueban espacios y marcadores de conflicto.
+
+Estas pruebas no usan perfiles existentes ni modifican datos reales.
 
 ## Cómo correrlo en local
 
@@ -109,6 +146,6 @@ Ramas `feature/*` integradas a `develop` mediante pull request. Sin commits dire
 
 ### Notas de desarrollo
 
-El diseño "responsive" del dashboard y de las mesas de jjuego está pensado principalmente para pantallas de escritorio. En celulares con pantallas muy pequeñas podria requerir algo de "scroll" o ajustes visuales.
+El diseño "responsive" del dashboard y de las mesas de juego está pensado principalmente para pantallas de escritorio. En celulares con pantallas muy pequeñas podría requerir algo de "scroll" o ajustes visuales.
 
 Como los datos actualmente viven en el "localStorage" del navegador, las cuentas y el saldo volverán a su estado inicial si se prueba la aplicación usando el modo incógnito.
