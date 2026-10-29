@@ -3,61 +3,103 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#14202b">
   <title>Historial — UDP Grand Casino</title>
-  <link rel="stylesheet" href="../css/style.css">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="icon" href="/icons/icono-192.png" type="image/png">
+  <link rel="apple-touch-icon" href="/icons/icono-192.png">
+  <link rel="stylesheet" href="/css/style.css">
+  <script type="module" src="/js/main.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.8/dist/cdn.min.js"></script>
 </head>
-<body>
+<body x-data="pagina('jugador')">
 
-  <header class="sitio">
-    <h1>UDP Grand Casino</h1>
-    <nav class="principal" aria-label="Navegación de jugador">
-      <ul>
-        <li><a href="inicio.html">Inicio</a></li>
-        <li><a href="dashboard.html">Mi cuenta</a></li>
-        <li><a href="juegos.html">Juegos</a></li>
-        <li><a href="historial.html">Historial</a></li>
-        <li><a href="ranking.html">Ranking</a></li>
-      </ul>
-    </nav>
-    <div class="header-acciones">
-      <span>JugadorDemo · 1.250 créditos</span>
-      <a class="boton-contorno" href="../index.html">Cerrar sesión</a>
+  <div class="aviso-conexion" role="status" x-data="avisoConexion" x-show="sinConexion" x-cloak
+       @online.window="actualizar()" @offline.window="actualizar()">
+    Sin conexión: la aplicación sigue funcionando con los datos guardados en este dispositivo.
+  </div>
+
+  <p class="verificando" x-show="verificando">Verificando sesión…</p>
+
+  <template x-if="autorizado">
+    <div class="aplicacion">
+
+      <header class="sitio">
+        <h1><a href="/jugador/dashboard.html">UDP Grand Casino</a></h1>
+        <p class="usuario">Hola, <span x-text="usuario.nombre"></span></p>
+        <nav class="principal" aria-label="Navegación de jugador" x-data="navegacion('jugador')" :class="{ 'abierto': abierto }">
+          <button type="button" class="menu-boton secundario" @click="alternar()"
+                  :aria-expanded="abierto" aria-controls="menu-principal">Menú</button>
+          <ul id="menu-principal">
+            <template x-for="e in enlaces" :key="e.ruta">
+              <li><a :href="e.ruta" x-text="e.texto" :aria-current="actual(e.ruta)"></a></li>
+            </template>
+            <li><button type="button" class="secundario" @click="salir()">Cerrar sesión</button></li>
+          </ul>
+        </nav>
+      </header>
+
+      <main>
+        <h2>Historial y estadísticas</h2>
+
+        <div x-data="historial(usuario.id)">
+          <p class="mensaje-cargando" role="status" x-show="cargando" x-cloak>Cargando…</p>
+          <p class="mensaje-error" role="alert" x-show="error" x-text="error" x-cloak></p>
+          <p class="mensaje-vacio" x-show="mostrarVacio" x-cloak>Todavía no has jugado ninguna partida. <a href="/jugador/juegos.html">Elige un juego</a> y haz tu primera apuesta.</p>
+
+          <section aria-labelledby="stats-titulo" x-show="!cargando" x-cloak>
+            <h3 id="stats-titulo">Mis estadísticas</h3>
+            <div class="grid-tarjetas">
+              <article class="tarjeta">
+                <h4>Partidas jugadas</h4>
+                <p class="cifra" x-text="resumen.jugadas"></p>
+              </article>
+              <article class="tarjeta">
+                <h4>Partidas ganadas</h4>
+                <p class="cifra" x-text="resumen.ganadas"></p>
+              </article>
+              <article class="tarjeta">
+                <h4>Créditos netos</h4>
+                <p class="cifra" x-text="$creditos(resumen.neto, true)"></p>
+              </article>
+            </div>
+          </section>
+
+          <section aria-labelledby="historial-titulo" x-show="mostrarLista" x-cloak>
+            <h3 id="historial-titulo">Historial de partidas</h3>
+            <table>
+              <caption>Partidas jugadas, de la más reciente a la más antigua</caption>
+              <thead>
+                <tr>
+                  <th scope="col">Fecha</th>
+                  <th scope="col">Juego</th>
+                  <th scope="col">Apuesta</th>
+                  <th scope="col">Resultado</th>
+                  <th scope="col">Créditos</th>
+                </tr>
+              </thead>
+              <tbody>
+                <template x-for="p in partidas" :key="p.id">
+                  <tr>
+                    <td data-label="Fecha" x-text="$fecha(p.fecha)"></td>
+                    <td data-label="Juego" x-text="p.juego"></td>
+                    <td data-label="Apuesta" x-text="$creditos(p.monto)"></td>
+                    <td data-label="Resultado" x-text="p.resultado"></td>
+                    <td data-label="Créditos" x-text="$creditos(p.neto, true)"></td>
+                  </tr>
+                </template>
+              </tbody>
+            </table>
+          </section>
+        </div>
+      </main>
+
+      <footer class="sitio">
+        <p>UDP Grand Casino — Grupo 9 — Desarrollo Web y Móvil</p>
+      </footer>
+
     </div>
-  </header>
-
-  <main>
-    <h2>Historial de partidas</h2>
-
-    <table>
-      <caption>Últimas partidas jugadas</caption>
-      <thead>
-        <tr>
-          <th scope="col">Fecha</th>
-          <th scope="col">Juego</th>
-          <th scope="col">Apuesta</th>
-          <th scope="col">Resultado</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>10/09/2026</td>
-          <td>Ruleta</td>
-          <td>50 créditos</td>
-          <td>Ganó 100 créditos</td>
-        </tr>
-        <tr>
-          <td>08/09/2026</td>
-          <td>Ruleta</td>
-          <td>20 créditos</td>
-          <td>Perdió 20 créditos</td>
-        </tr>
-      </tbody>
-    </table>
-  </main>
-
-  <footer class="sitio">
-    <p>UDP Grand Casino — Grupo 9 — Desarrollo Web</p>
-  </footer>
+  </template>
 
 </body>
 </html>
