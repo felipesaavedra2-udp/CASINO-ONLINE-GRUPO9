@@ -1,5 +1,5 @@
 // Cambiar VERSION al publicar cambios en los recursos esenciales.
-const VERSION = '1359f3a80fcdd32c';
+const VERSION = '19b634a2afb26f58';
 const PREFIJO_CACHE = 'casino-shell-';
 const CACHE = PREFIJO_CACHE + VERSION;
 const SHELL = [
@@ -10,6 +10,8 @@ const SHELL = [
   "/admin/partidas.html",
   "/admin/usuarios.html",
   "/css/style.css",
+  "/icono-192.png",
+  "/icono-512.png",
   "/icons/icono-192.png",
   "/icons/icono-512.png",
   "/index.html",

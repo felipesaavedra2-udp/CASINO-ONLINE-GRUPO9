@@ -1,6 +1,10 @@
-# CASINO-ONLINE-GRUPO9
+# UDP Grand Casino — Grupo 9
 
-Proyecto de casino online con créditos virtuales (sin dinero real), desarrollado para el ramo de Desarrollo Web y Móvil.
+Casino online que opera con **créditos virtuales** (sin dinero real). Los jugadores se registran,
+juegan **ruleta** y **blackjack**, revisan su historial y compiten en un ranking. Los administradores
+gestionan juegos, usuarios y partidas, y consultan estadísticas generales.
+
+CIT2308 — Desarrollo Web y Móvil · UDP 2026-2 · Entrega 2 (frontend dinámico, MVC y PWA).
 
 ## Integrantes
 
@@ -8,26 +12,140 @@ Proyecto de casino online con créditos virtuales (sin dinero real), desarrollad
 - Felipe Saavedra
 - Benjamin Vergara
 
-## Descripción
+## Acceso
 
-Sitio web estático (HTML/CSS) que simula un casino online. Incluye dos flujos de navegación:
+| | |
+|---|---|
+| **URL de entrega** | Pendiente de confirmar; debe utilizar HTTPS para PWA y apuestas |
+| **Dirección documentada anteriormente** | `http://52.70.77.187` (disponibilidad y carácter elástico no verificados en esta integración) |
+| Servidor | nginx sirviendo el sitio estático en `/` |
 
-- **Vista jugador**: inicio, mi cuenta, juegos (ruleta y blackjack), historial de partidas y ranking de jugadores.
-- **Vista administrador**: panel general, gestión de juegos, usuarios registrados, partidas/apuestas y estadísticas.
+> Con una **IP elástica** la dirección no cambia al apagar y encender la instancia.
+> Si el servidor cambia de dirección, actualizar esta tabla.
 
-Los créditos que se muestran son virtuales y no representan dinero real; el proyecto no gestiona métodos de pago.
+### Cuentas de prueba
 
-## Estructura del proyecto
+| Rol | Correo | Contraseña |
+|---|---|---|
+| Administrador | `admin@casino.cl` | `admin123` |
+| Jugador | `felipe@casino.cl` | `1234` |
+
+Los datos de ejemplo se crean solos la primera vez que se abre la aplicación en un navegador.
+Cada navegador guarda sus propios datos.
+
+## Rutas y vistas
+
+| Ruta | Rol | Propósito |
+|---|---|---|
+| `/index.html` | público | Inicio de sesión |
+| `/registro.html` | público | Alta de cuenta (recibe 1.000 créditos) |
+| `/jugador/dashboard.html` | jugador | Mi cuenta: saldo y accesos rápidos |
+| `/jugador/juegos.html` | jugador | Catálogo de juegos activos |
+| `/jugador/ruleta.html` | jugador | Mesa de ruleta: apuesta a número, color o rango |
+| `/jugador/blackjack.html` | jugador | Mesa de blackjack: pedir carta o plantarse |
+| `/jugador/historial.html` | jugador | Historial de partidas propias y estadísticas |
+| `/jugador/ranking.html` | jugador | Ranking por créditos netos |
+| `/admin/panel.html` | admin | Resumen general y accesos |
+| `/admin/juegos.html` | admin | CRUD de juegos, activar/desactivar |
+| `/admin/usuarios.html` | admin | CRUD de usuarios y saldos |
+| `/admin/partidas.html` | admin | Listar, corregir y anular partidas |
+| `/admin/estadisticas.html` | admin | Estadísticas generales |
+
+Las páginas privadas verifican sesión y rol antes de mostrar su contenido.
+
+## Arquitectura
+
+Cada dominio tiene **vista, controlador, servicio** y un único contrato de datos compartido.
 
 ```
-index.html          Inicio de sesión
-registro.html          Registro de usuario
-css/style.css        Estilos generales del sitio
-js/main.js            Interacciones simples (activar/desactivar juegos)
-jugador/               Vistas del jugador (inicio, mi cuenta, juegos, ruleta, blackjack, historial, ranking)
-admin/                  Vistas del administrador (panel, juegos, usuarios, partidas, estadísticas)
+index.html, registro.html, jugador/*.html, admin/*.html     VISTAS (Alpine, sin lógica)
+js/
+  main.js                       composition root: conecta servicios y componentes Alpine
+  controladores/                coordinan: reciben un servicio, traducen eventos en órdenes
+  servicios/                    reglas de negocio: reciben el repositorio por constructor
+  repositorio/
+    Repository.js               contrato (clase base, métodos async)
+    LocalStorageRepository.js   implementación: el único archivo que toca el almacenamiento
+  componentes/                  piezas Alpine reutilizables (formularios, filas, menú, estados)
+  formato.js                    formato de créditos y fechas
+  util/formato.js               compatibilidad: reexporta las funciones de formato
+  vendor/                       Alpine 3.14.8 local y licencia MIT
+sw.js · manifest.json · icons/  PWA
 ```
 
-## Despliegue
+| Dominio | Vistas | Controlador | Servicio |
+|---|---|---|---|
+| Usuarios | `index`, `registro`, `jugador/dashboard`, `admin/usuarios` | `UsuarioController.js` | `UsuarioService.js` |
+| Juegos | `jugador/juegos`, `admin/juegos` | `JuegoController.js` | `JuegoService.js` |
+| Partidas | `jugador/ruleta`, `jugador/blackjack`, `jugador/historial`, `admin/partidas` | `PartidaController.js` | `PartidaService.js` |
+| Reportes | `jugador/ranking`, `admin/panel`, `admin/estadisticas` | `ReporteController.js` | `ReporteService.js` |
 
-Sitio desplegado en AWS: `http://52.70.77.187`
+Flujo de una acción: **vista → controlador → servicio → repositorio**.
+El HTML nunca valida ni guarda; el controlador nunca valida ni conoce el almacenamiento;
+el servicio nunca sabe dónde se guardan los datos.
+
+### Cambiar la fuente de datos
+
+Hoy los datos viven en el navegador. Para pasar a una API (Entrega 3) se implementa el contrato
+de repositorio y se adapta su creación en `js/main.js`. Las operaciones de partidas necesitan
+además conservar la atomicidad de `transaccionPartidas`; una API debe proporcionar una transacción
+equivalente en el servidor. No basta con sustituir lecturas y escrituras independientes.
+
+Las vistas y controladores consumen los servicios mediante sus interfaces actuales.
+
+## PWA
+
+- `manifest.json` con nombre, íconos de 192 y 512 px, `display: standalone` y colores del tema.
+- `sw.js` precarga las páginas, CSS, módulos JavaScript, íconos y Alpine local.
+  Usa cachés `casino-shell-<VERSION>`, red primero y copia local cuando no hay conexión.
+- `js/pwa.js` registra el Service Worker sin reutilizar su caché HTTP. Una actualización muestra
+  un botón para recargar sin interrumpir automáticamente formularios o manos en curso.
+- La activación elimina solo cachés anteriores propias, incluida la antigua `casino-v1`.
+- **Al cambiar recursos esenciales, actualizar `VERSION` y revisar `SHELL` en `sw.js`.**
+- Se necesita una primera instalación con conexión y servir el sitio por HTTPS o localhost.
+  Una pestaña ya abierta conserva el JavaScript cargado hasta recargar.
+- Se conservan los íconos de `icons/` y las copias aportadas en la raíz. El manifiesto utiliza `icons/`.
+
+## Persistencia de partidas
+
+El repositorio guarda usuarios, historial y manos de Blackjack en una sola escritura en
+`casino:estadoPartidas` al confirmar la primera operación de partidas. Conserva las claves
+anteriores y las interfaces de acceso para el resto de los módulos. Las manos reservan créditos,
+se recuperan tras recargar y no se liquidan dos veces.
+
+Las escrituras se coordinan con Web Locks entre pestañas. Sin soporte de Web Locks se rechazan
+las operaciones de partidas. Los datos siguen siendo locales al navegador y al origen:
+`localhost` y `127.0.0.1` mantienen almacenamientos distintos.
+
+## Comprobaciones automatizadas
+
+- Partidas, exclusivamente con almacenamiento simulado: servir el proyecto y abrir
+  `/tests/partidas.regresion.html`.
+- PWA y regresiones de partidas en un perfil y servidor temporales aislados:
+  `py tests/pwa.regresion.py` (o `python3 tests/pwa.regresion.py`).
+  Requiere Chrome; puede indicarse su ejecutable mediante la variable `CHROME_PATH`.
+- `git diff --check` y `git diff --cached --check` comprueban espacios y marcadores de conflicto.
+
+Estas pruebas no usan perfiles existentes ni modifican datos reales.
+
+## Cómo correrlo en local
+
+El Service Worker necesita que el sitio venga servido (no abierto como archivo):
+
+```bash
+python3 -m http.server 8080
+# abrir http://localhost:8080
+```
+
+En el servidor, nginx debe servir esta carpeta como raíz del sitio (`root` apuntando al proyecto),
+de modo que `/sw.js` y `/manifest.json` queden en la raíz.
+
+## Flujo Git
+
+Ramas `feature/*` integradas a `develop` mediante pull request. Sin commits directos a `main`.
+
+### Notas de desarrollo
+
+El diseño "responsive" del dashboard y de las mesas de juego está pensado principalmente para pantallas de escritorio. En celulares con pantallas muy pequeñas podría requerir algo de "scroll" o ajustes visuales.
+
+Como los datos actualmente viven en el "localStorage" del navegador, las cuentas y el saldo volverán a su estado inicial si se prueba la aplicación usando el modo incógnito.
