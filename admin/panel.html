@@ -13,8 +13,8 @@
 </head>
 <body x-data="pagina('admin')">
 
-  <div class="aviso-conexion" role="status" x-data="avisoConexion" x-show="sinConexion" x-cloak
-       @online.window="actualizar()" @offline.window="actualizar()">
+   <div class="aviso-conexion" role="status" x-data="avisoConexion"  x-show="sinConexion"
+    @offline.window="actualizar()" x-cloak   @online.window="actualizar()">
     Sin conexión: la aplicación sigue funcionando con los datos guardados en este dispositivo.
   </div>
 
@@ -42,7 +42,7 @@
         <h2>Panel de administración</h2>
 
         <div x-data="resumenGeneral">
-          <h3 id="resumen-titulo">Resumen general</h3>
+          <h3 id="resumen-titulo">Resumen del casino</h3>
           <p class="mensaje-cargando" role="status" x-show="cargando" x-cloak>Cargando…</p>
           <p class="mensaje-error" role="alert" x-show="error" x-text="error" x-cloak></p>
           <div class="grid-tarjetas" x-show="mostrarDatos" x-cloak aria-labelledby="resumen-titulo">
@@ -75,12 +75,12 @@
             </article>
             <article class="tarjeta">
               <h4>Usuarios</h4>
-              <p>Administra las cuentas y los saldos de los usuarios.</p>
+              <p>Gestión de cuentas, roles y saldo de usuarios.</p>
               <a class="boton secundario" href="/admin/usuarios.html">Ir a usuarios</a>
             </article>
             <article class="tarjeta">
               <h4>Partidas y apuestas</h4>
-              <p>Revisa, corrige o anula partidas registradas.</p>
+              <p>Historial de partidas y ajustes de apuestas.</p>
               <a class="boton secundario" href="/admin/partidas.html">Ir a partidas</a>
             </article>
             <article class="tarjeta">
