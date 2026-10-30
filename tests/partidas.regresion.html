@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="es">
+<meta charset="UTF-8">
+<title>Regresión de partidas: datos simulados</title>
+<p>Estas pruebas usan almacenamiento aislado en memoria; no acceden a localStorage.</p>
+<pre id="resultado">Ejecutando...</pre>
+<script type="module">
+  import { ejecutarPruebas } from './partidas.regresion.js';
+  const salida = document.querySelector('#resultado');
+  try {
+    const pruebas = await ejecutarPruebas();
+    salida.textContent = pruebas.length + ' pruebas aprobadas\n' + pruebas.join('\n');
+  } catch (error) {
+    salida.textContent = 'FALLO: ' + error.stack;
+    console.error(error);
+  }
+</script>
+</html>

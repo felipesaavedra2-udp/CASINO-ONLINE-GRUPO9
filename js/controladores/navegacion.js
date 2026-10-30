@@ -23,6 +23,10 @@ export function crearNavegacion(usuarios, rol) {
       this.abierto = !this.abierto;
     },
 
+    actual(ruta) {
+      return window.location.pathname === ruta ? 'page' : null;
+    },
+
     async salir() {
       await usuarios.cerrarSesion();
       window.location.href = '/index.html';
