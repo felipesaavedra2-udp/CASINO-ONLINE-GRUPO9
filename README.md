@@ -175,7 +175,7 @@ worker por sí solo no confirma que todas las rutas funcionen sin conexión.
 
 ## Video de presentación
 
-Enlace al video final: **pendiente de agregar**.
+Enlace al video final: https://drive.google.com/file/d/19w3ddqyG025AQB6g61Ypy69q_gq3Ru4Y/view?usp=sharing
 
 ## Flujo Git
 
