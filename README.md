@@ -12,26 +12,40 @@ CIT2308 — Desarrollo Web y Móvil · UDP 2026-2 · Entrega 2 (frontend dinámi
 - Felipe Saavedra
 - Benjamin Vergara
 
+## Funcionalidades implementadas
+
+- Registro e inicio de sesión con vistas y navegación según el rol de jugador o administrador.
+- Gestión de créditos virtuales y catálogo de juegos activos.
+- Ruleta con apuestas a número, color o rango y blackjack con opciones para pedir carta o plantarse.
+- Historial de partidas, ranking de jugadores y estadísticas personales y generales.
+- Herramientas de administración para juegos, usuarios, saldos y partidas.
+- Interfaz adaptable, aviso de conexión y recursos para instalación como aplicación web.
+
+Los datos se guardan en el navegador; no se utiliza una base de datos central ni un servidor de
+aplicación. Cada navegador y origen mantiene sus propios datos.
+
+## Tecnologías
+
+- HTML, CSS y JavaScript con módulos ES.
+- Alpine.js 3.14.8, incluido localmente.
+- Arquitectura MVC por dominios: vistas, controladores, servicios y repositorio.
+- `localStorage` para persistencia y Web Locks para coordinar operaciones de partidas entre
+  pestañas compatibles.
+- Web App Manifest y Service Worker para las capacidades PWA.
+- nginx en AWS EC2 para servir archivos estáticos.
+
 ## Acceso
 
 | | |
 |---|---|
-| **URL de entrega** | Pendiente de confirmar; debe utilizar HTTPS para PWA y apuestas |
-| **Dirección documentada anteriormente** | `http://52.70.77.187` (disponibilidad y carácter elástico no verificados en esta integración) |
-| Servidor | nginx sirviendo el sitio estático en `/` |
+| **Aplicación pública** | [https://52-70-77-187.sslip.io/](https://52-70-77-187.sslip.io/) |
+| **IP elástica** | `52.70.77.187`, asociada a la instancia EC2 |
+| **Versión publicada** | Commit `491503a` de `origin/develop` |
+| **HTTPS** | Let's Encrypt; configurado en nginx |
+| **PWA** | Service Worker registrado y activado en Chrome |
 
-> Con una **IP elástica** la dirección no cambia al apagar y encender la instancia.
-> Si el servidor cambia de dirección, actualizar esta tabla.
-
-### Cuentas de prueba
-
-| Rol | Correo | Contraseña |
-|---|---|---|
-| Administrador | `admin@casino.cl` | `admin123` |
-| Jugador | `felipe@casino.cl` | `1234` |
-
-Los datos de ejemplo se crean solos la primera vez que se abre la aplicación en un navegador.
-Cada navegador guarda sus propios datos.
+Usa el dominio HTTPS de la tabla para acceder a la aplicación y mantener un único origen para la
+sesión, `localStorage` y el Service Worker.
 
 ## Rutas y vistas
 
@@ -61,16 +75,20 @@ Cada dominio tiene **vista, controlador, servicio** y un único contrato de dato
 index.html, registro.html, jugador/*.html, admin/*.html     VISTAS (Alpine, sin lógica)
 js/
   main.js                       composition root: conecta servicios y componentes Alpine
+  pwa.js                        registra el Service Worker
+  inicializarJuegos.js          configura componentes de juegos
   controladores/                coordinan: reciben un servicio, traducen eventos en órdenes
   servicios/                    reglas de negocio: reciben el repositorio por constructor
   repositorio/
     Repository.js               contrato (clase base, métodos async)
     LocalStorageRepository.js   implementación: el único archivo que toca el almacenamiento
   componentes/                  piezas Alpine reutilizables (formularios, filas, menú, estados)
+  estadoVista.js                estado de carga y error para vistas
   formato.js                    formato de créditos y fechas
   util/formato.js               compatibilidad: reexporta las funciones de formato
   vendor/                       Alpine 3.14.8 local y licencia MIT
-sw.js · manifest.json · icons/  PWA
+tests/                          pruebas de regresión
+sw.js · manifest.json · icons/  recursos PWA
 ```
 
 | Dominio | Vistas | Controlador | Servicio |
@@ -105,6 +123,8 @@ Las vistas y controladores consumen los servicios mediante sus interfaces actual
 - Se necesita una primera instalación con conexión y servir el sitio por HTTPS o localhost.
   Una pestaña ya abierta conserva el JavaScript cargado hasta recargar.
 - Se conservan los íconos de `icons/` y las copias aportadas en la raíz. El manifiesto utiliza `icons/`.
+- El equipo confirmó HTTPS en el dominio público y que el Service Worker está registrado y
+  activado en Chrome. El comportamiento offline debe probarse por separado en el navegador.
 
 ## Persistencia de partidas
 
@@ -137,8 +157,25 @@ python3 -m http.server 8080
 # abrir http://localhost:8080
 ```
 
-En el servidor, nginx debe servir esta carpeta como raíz del sitio (`root` apuntando al proyecto),
-de modo que `/sw.js` y `/manifest.json` queden en la raíz.
+## Despliegue público (AWS)
+
+La aplicación se sirve como archivos estáticos desde una instancia **AWS EC2 con Ubuntu 24.04**.
+La Elastic IP `52.70.77.187` está asociada a la instancia y el sitio público es
+[https://52-70-77-187.sslip.io/](https://52-70-77-187.sslip.io/). La versión publicada corresponde
+al commit `491503a` de `origin/develop`.
+
+nginx sirve `/var/www/casino-nueva-version` como raíz del sitio. El archivo de sitio habilitado es
+`/etc/nginx/sites-enabled/udp-grand-casino`. HTTPS está configurado con un certificado de Let's
+Encrypt. nginx debe servir desde la raíz los recursos `/sw.js`, `/manifest.json`, `/icons/`,
+`/css/` y `/js/`.
+
+El Service Worker fue registrado y activado en Chrome. Antes de una entrega, comprueba también la
+renovación del certificado y el comportamiento offline desde el dominio público; el registro del
+worker por sí solo no confirma que todas las rutas funcionen sin conexión.
+
+## Video de presentación
+
+Enlace al video final: **pendiente de agregar**.
 
 ## Flujo Git
 
